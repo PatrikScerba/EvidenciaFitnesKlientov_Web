@@ -72,4 +72,14 @@ public class ClientController {
 
         return ResponseEntity.noContent().build();
     }
+
+    // Vyhľadávanie klienta.
+    @GetMapping("/search")
+    public ResponseEntity<List<ClientResponse>> searchClients(
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String email
+    ) {
+        return ResponseEntity.ok(clientService.searchClients(firstName, lastName, email));
+    }
 }

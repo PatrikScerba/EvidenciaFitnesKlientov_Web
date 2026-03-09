@@ -124,6 +124,49 @@ public class ClientServiceImpl implements ClientService {
         clientRepository.deleteById(id);
     }
 
+    // Vyhľadávanie klienta
+    public List<ClientResponse> searchClients(String firstName, String lastName, String email) {
+
+        // Odstránenie medzier na začiatku a na konci.
+        firstName = firstName == null ? null : firstName.trim();
+        lastName = lastName == null ? null : lastName.trim();
+        email = email == null ? null : email.trim();
+
+        // Overenie či parametre boli zadané.
+        boolean hasFirst = firstName != null && !firstName.isBlank();
+        boolean hasLast = lastName != null && !lastName.isBlank();
+        boolean hasEmail = email != null && !email.isBlank();
+
+        // Ak je zadaný email, vyhľadáva sa prioritne podľa emailu
+        if (hasEmail) {
+            return clientRepository.findByEmail(email)
+                    .stream()
+                    .map(this::mapToResponse)
+                    .toList();
+        }
+
+        List<ClientEntity> result;
+
+        // Vyhľadávanie podľa mena/priezviska alebo oboje.
+        if (hasFirst && hasLast) {
+            result = clientRepository
+                    .findByFirstNameContainingIgnoreCaseAndLastNameContainingIgnoreCase(firstName, lastName);
+
+        } else if (hasFirst) {
+            result = clientRepository.findByFirstNameContainingIgnoreCase(firstName);
+
+        } else if (hasLast) {
+            result = clientRepository.findByLastNameContainingIgnoreCase(lastName);
+
+        } else {
+            result = clientRepository.findAll();
+        }
+
+        return result.stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
     // Pomocná metóda na prevod entity na response DTO.
     private ClientResponse mapToResponse(ClientEntity entity) {
 
@@ -138,6 +181,5 @@ public class ClientServiceImpl implements ClientService {
         dto.setEmail(entity.getEmail());
 
         return dto;
-
     }
 }

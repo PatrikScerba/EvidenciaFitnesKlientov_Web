@@ -22,6 +22,6 @@ public interface ClientService {
 
     void deleteClient(Long id);
 
-
+    List<ClientResponse> searchClients(String firstName, String lastName, String email);
 
 }
