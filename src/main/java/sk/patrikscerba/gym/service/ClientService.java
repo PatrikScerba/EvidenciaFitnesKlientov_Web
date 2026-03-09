@@ -1,4 +1,4 @@
-package sk.patrikscerba.gym.serivce;
+package sk.patrikscerba.gym.service;
 
 import sk.patrikscerba.gym.dto.ClientCreateRequest;
 import sk.patrikscerba.gym.dto.ClientResponse;
@@ -21,4 +21,7 @@ public interface ClientService {
     ClientResponse updateClient(Long id, ClientUpdateRequest request);
 
     void deleteClient(Long id);
+
+
+
 }

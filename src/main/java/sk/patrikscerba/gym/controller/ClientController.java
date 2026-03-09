@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import sk.patrikscerba.gym.dto.ClientCreateRequest;
 import sk.patrikscerba.gym.dto.ClientResponse;
 import sk.patrikscerba.gym.dto.ClientUpdateRequest;
-import sk.patrikscerba.gym.serivce.ClientService;
+import sk.patrikscerba.gym.service.ClientService;
 
 import java.util.List;
 

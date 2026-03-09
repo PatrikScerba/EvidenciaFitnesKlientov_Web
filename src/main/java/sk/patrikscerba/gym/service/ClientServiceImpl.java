@@ -1,4 +1,4 @@
-package sk.patrikscerba.gym.serivce;
+package sk.patrikscerba.gym.service;
 
 import org.springframework.stereotype.Service;
 import sk.patrikscerba.gym.dto.ClientCreateRequest;
@@ -25,7 +25,7 @@ public class ClientServiceImpl implements ClientService {
 
     }
 
-    // Registrácia nového klienta.
+    // Registrácia nového klienta
     @Override
     public ClientResponse registerClient(ClientCreateRequest request) {
 
