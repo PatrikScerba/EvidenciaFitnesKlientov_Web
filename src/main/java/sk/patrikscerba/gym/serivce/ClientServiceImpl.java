@@ -25,9 +25,15 @@ public class ClientServiceImpl implements ClientService {
 
     }
 
-    // Registrácia nového klienta
+    // Registrácia nového klienta.
     @Override
     public ClientResponse registerClient(ClientCreateRequest request) {
+
+        // Kontrola veku (biznis pravidlo)
+        int age = java.time.Period.between(request.getDateOfBirth(), java.time.LocalDate.now()).getYears();
+        if (age < 15) {
+            throw new RuntimeException("Registrácia nového klienta je dostupná len osobám starším ako 15 rokov.");
+        }
 
         if (clientRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException(
