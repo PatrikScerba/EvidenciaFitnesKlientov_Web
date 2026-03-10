@@ -1,8 +1,6 @@
 package sk.patrikscerba.gym.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
@@ -13,18 +11,22 @@ import java.time.LocalDate;
 public class ClientUpdateRequest {
 
     @NotBlank(message = "Krstné meno je povinné.")
+    @Size(min = 2, max = 50, message = "Meno musí mať 2 až 50 znakov.")
     private String firstName;
 
     @NotBlank(message = "Priezvisko je povinné.")
+    @Size(min = 2, max = 50, message = "Meno musí mať 2 až 50 znakov.")
     private String lastName;
 
     @NotNull(message = "Dátum narodenia je povinný.")
+    @Past(message = "Zadajte platný dátum narodenia.")
     private LocalDate dateOfBirth;
 
     @NotBlank(message = "Telefónne číslo je povinné.")
     private String phoneNumber;
 
     @NotBlank(message = "Adresa je povinná.")
+    @Size(max = 100, message = "Adresa môže mať maximálne 100 znakov.")
     private String address;
 
     @NotBlank(message = "Email je povinný.")

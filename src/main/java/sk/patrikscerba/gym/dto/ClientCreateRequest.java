@@ -1,8 +1,6 @@
 package sk.patrikscerba.gym.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
@@ -11,19 +9,23 @@ import java.time.LocalDate;
  */
 public class ClientCreateRequest {
 
-    @NotBlank(message = "Pole meno nesmie byť prázdne")
+    @NotBlank(message = "Pole Krstné meno nesmie byť prázdne")
+    @Size(min = 2, max = 50, message = "Meno musí mať 2 až 50 znakov.")
     private String firstName;
 
     @NotBlank(message = "Pole priezvisko nesmie byť prázdne")
+    @Size(min = 2, max = 50, message = "Meno musí mať 2 až 50 znakov.")
     private String lastName;
 
     @NotNull(message = "Pole dátum narodenia nesmie byť prázdne")
+    @Past(message = "Zadajte platný dátum narodenia.")
     private LocalDate dateOfBirth;
 
     @NotBlank(message = "Pole telefónne číslo nesmie byť prázdne")
     private String phoneNumber;
 
     @NotBlank(message = "Pole adresa nesmie byť prázdne")
+    @Size(max = 100, message = "Adresa môže mať maximálne 100 znakov.")
     private String address;
 
     @Email(message = "Neplatný formát emailu")
