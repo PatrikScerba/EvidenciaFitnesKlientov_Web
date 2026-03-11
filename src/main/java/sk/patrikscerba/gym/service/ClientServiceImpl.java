@@ -5,6 +5,9 @@ import sk.patrikscerba.gym.dto.ClientCreateRequest;
 import sk.patrikscerba.gym.dto.ClientResponse;
 import sk.patrikscerba.gym.dto.ClientUpdateRequest;
 import sk.patrikscerba.gym.entity.ClientEntity;
+import sk.patrikscerba.gym.exception.BusinessException;
+import sk.patrikscerba.gym.exception.ConflictException;
+import sk.patrikscerba.gym.exception.NotFoundException;
 import sk.patrikscerba.gym.repository.ClientRepository;
 
 import java.util.List;
@@ -32,11 +35,11 @@ public class ClientServiceImpl implements ClientService {
         // Kontrola veku (biznis pravidlo)
         int age = java.time.Period.between(request.getDateOfBirth(), java.time.LocalDate.now()).getYears();
         if (age < 15) {
-            throw new RuntimeException("Registrácia nového klienta je dostupná len osobám starším ako 15 rokov.");
+            throw new BusinessException("Registrácia nového klienta je dostupná len osobám starším ako 15 rokov.");
         }
 
         if (clientRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException(
+            throw new ConflictException(
                     "Klient s emailom už existuje: " + request.getEmail()
             );
         }
@@ -62,7 +65,7 @@ public class ClientServiceImpl implements ClientService {
 
         ClientEntity entity = clientRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Klient neexistuje, id=" + id)
+                        new NotFoundException("Klient neexistuje, id=" + id)
                 );
 
         return mapToResponse(entity);
@@ -81,16 +84,21 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientResponse updateClient(Long id, ClientUpdateRequest request) {
 
+        int age = java.time.Period.between(request.getDateOfBirth(), java.time.LocalDate.now()).getYears();
+        if (age < 15) {
+            throw new BusinessException("Údaje klienta nie je možné upraviť, ak má osoba menej ako 15 rokov.");
+        }
+
         ClientEntity entity = clientRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Klient neexistuje, id=" + id)
+                        new NotFoundException("Klient neexistuje, id=" + id)
                 );
 
         // Kontrola duplicity emailu iba v prípade, že sa email mení.
         if (!entity.getEmail().equals(request.getEmail())
                 && clientRepository.existsByEmail(request.getEmail())) {
 
-            throw new RuntimeException(
+            throw new ConflictException(
                     "Email už používa iný klient: "
                             + request.getEmail()
             );
@@ -116,7 +124,7 @@ public class ClientServiceImpl implements ClientService {
 
         // kontrola existencie
         if (!clientRepository.existsById(id)) {
-            throw new RuntimeException(
+            throw new NotFoundException(
                     "Klient neexistuje, id=" + id);
         }
 
