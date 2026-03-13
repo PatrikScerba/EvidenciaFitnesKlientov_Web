@@ -35,3 +35,11 @@ build/
 
 # Loga
 *.log
+
+# React frontend
+react-frontend/node_modules/
+react-frontend/dist/
+react-frontend/dist-ssr/
+react-frontend/.idea/
+react-frontend/.DS_Store
+react-frontend/*.local
