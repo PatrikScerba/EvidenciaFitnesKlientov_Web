@@ -27,6 +27,18 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
+    @OneToOne
+    @JoinColumn(name = "client_id")
+    private  ClientEntity client;
+
+    public ClientEntity getClient() {
+        return client;
+    }
+
+    public void setClient(ClientEntity client) {
+        this.client = client;
+    }
+
     public long getUserId() {
         return userId;
     }
