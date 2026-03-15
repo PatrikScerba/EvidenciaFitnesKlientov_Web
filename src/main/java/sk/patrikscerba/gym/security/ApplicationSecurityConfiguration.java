@@ -33,12 +33,20 @@ public class ApplicationSecurityConfiguration {
 
                 // Definuje pravidlá prístupu k endpointom
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/api/account/register").permitAll()
-                        .requestMatchers("/api/auth/login").permitAll()
-                        .requestMatchers("/clients/**").authenticated()
 
-                        // Ostatné endpointy vyžadujú prihlásenie
+                        // Verejný endpoint pre prihlásenie.
+                        .requestMatchers("/api/auth/login").permitAll()
+
+                        // Verejný endpoint pre registráciu používateľa.
+                        .requestMatchers("/api/account/register").permitAll()
+
+                        // Endpointy sprístupnené podľa role používateľa.
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/employee/**").hasAnyRole("ADMIN", "EMPLOYEE")
+                        .requestMatchers("/api/client/**").hasRole("CLIENT")
+                        .requestMatchers("/api/clients/**").hasAnyRole("ADMIN", "EMPLOYEE")
+
+                        // Ostatné endpointy vyžadujú prihlásenie.
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
