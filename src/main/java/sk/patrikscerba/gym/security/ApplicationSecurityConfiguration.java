@@ -12,6 +12,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 /**
  * Konfiguračná trieda pre nastavenie Spring Security.
@@ -27,12 +32,15 @@ public class ApplicationSecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(Customizer.withDefaults())
 
                 // Vypnuté CSRF pre REST API
                 .csrf(csrf -> csrf.disable())
 
                 // Definuje pravidlá prístupu k endpointom
                 .authorizeHttpRequests(auth -> auth
+
+                        .requestMatchers("/").permitAll()
 
                         // Verejný endpoint pre prihlásenie.
                         .requestMatchers("/api/auth/login").permitAll()
@@ -79,5 +87,19 @@ public class ApplicationSecurityConfiguration {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    // CORS konfigurácia umožňujúca komunikáciu React frontend-u so Spring Boot backendom.
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
