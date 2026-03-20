@@ -34,27 +34,25 @@ public class ApplicationSecurityConfiguration {
         http
                 .cors(Customizer.withDefaults())
 
-                // Vypnuté CSRF pre REST API
+                // Vypnutie CSRF pre REST API
                 .csrf(csrf -> csrf.disable())
 
-                // Definuje pravidlá prístupu k endpointom
+                // Definovanie pravidiel prístupu k endpointom
                 .authorizeHttpRequests(auth -> auth
 
+                        // Verejne dostupný root endpoint
                         .requestMatchers("/").permitAll()
 
                         // Verejný endpoint pre prihlásenie.
                         .requestMatchers("/api/auth/login").permitAll()
 
-                        // Verejný endpoint pre registráciu používateľa.
-                        .requestMatchers("/api/account/register").permitAll()
-
-                        // Endpointy sprístupnené podľa role používateľa.
+                        // Endpointy prístupné podľa role používateľa.
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/employee/**").hasAnyRole("ADMIN", "EMPLOYEE")
                         .requestMatchers("/api/client/**").hasRole("CLIENT")
                         .requestMatchers("/api/clients/**").hasAnyRole("ADMIN", "EMPLOYEE")
 
-                        // Ostatné endpointy vyžadujú prihlásenie.
+                        // Všetky ostatné endpointy vyžadujú prihlásenie.
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
@@ -66,8 +64,8 @@ public class ApplicationSecurityConfiguration {
         return http.build();
     }
 
-    // Vytvorí provider, ktorý overuje používateľa cez UserDetailsService
-    // a porovnáva heslá pomocou BCrypt encoderu.
+    // Provider overuje používateľa cez UserDetailsService
+    // a porovnáva heslá pomocou PasswordEncoder.
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -82,7 +80,7 @@ public class ApplicationSecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-    // Sprístupní AuthenticationManager, ktorý sa používa pri vlastnom login procese
+    // Sprístupnenie AuthenticationManager, ktorý sa používa pri vlastnom login procese
     // na autentifikáciu používateľa cez Spring Security.
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
