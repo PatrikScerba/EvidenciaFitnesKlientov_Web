@@ -3,6 +3,7 @@ package sk.patrikscerba.gym.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -50,7 +51,12 @@ public class ApplicationSecurityConfiguration {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/employee/**").hasAnyRole("ADMIN", "EMPLOYEE")
                         .requestMatchers("/api/client/**").hasRole("CLIENT")
-                        .requestMatchers("/api/clients/**").hasAnyRole("ADMIN", "EMPLOYEE")
+
+                        .requestMatchers(HttpMethod.GET, "/api/clients/**").hasAnyRole("ADMIN", "EMPLOYEE")
+                        .requestMatchers(HttpMethod.POST, "/api/clients/**").hasAnyRole("ADMIN", "EMPLOYEE")
+                        .requestMatchers(HttpMethod.PUT, "/api/clients/**").hasAnyRole("ADMIN", "EMPLOYEE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/clients/**").hasRole("ADMIN")
+
 
                         // Všetky ostatné endpointy vyžadujú prihlásenie.
                         .anyRequest().authenticated()

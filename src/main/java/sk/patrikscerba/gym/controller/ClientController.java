@@ -18,7 +18,7 @@ import java.util.List;
  * Všetky endpointy v tejto triede majú základný prefix /clients.
  */
 @RestController
-@RequestMapping("/clients")
+@RequestMapping("/api/clients")
 public class ClientController {
 
     private final ClientService clientService;
