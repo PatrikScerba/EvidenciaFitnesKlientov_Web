@@ -1,4 +1,4 @@
-package sk.patrikscerba.gym.dto;
+package sk.patrikscerba.gym.dto.employee;
 
 /**
  * DTO pre odpoveď po vytvorení účtu zamestnanca.

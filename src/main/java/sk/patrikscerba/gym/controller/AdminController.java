@@ -4,9 +4,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sk.patrikscerba.gym.dto.EmployeeAccountResponse;
-import sk.patrikscerba.gym.dto.EmployeeCreateRequest;
-import sk.patrikscerba.gym.service.EmployeeAccountService;
+import sk.patrikscerba.gym.dto.employee.EmployeeAccountResponse;
+import sk.patrikscerba.gym.dto.employee.EmployeeCreateRequest;
+import sk.patrikscerba.gym.service.employee.EmployeeAccountService;
 
 /**
  * Controller pre administrátorské operácie.

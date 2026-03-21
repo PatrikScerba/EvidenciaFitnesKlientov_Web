@@ -1,4 +1,4 @@
-package sk.patrikscerba.gym.dto;
+package sk.patrikscerba.gym.dto.client;
 
 /**
  * DTO odpoveď po úspešnom vytvorení klienta a jeho používateľského účtu.

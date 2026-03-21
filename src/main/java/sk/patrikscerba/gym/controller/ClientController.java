@@ -4,12 +4,12 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sk.patrikscerba.gym.dto.ClientAccountResponse;
-import sk.patrikscerba.gym.dto.ClientCreateRequest;
-import sk.patrikscerba.gym.dto.ClientResponse;
-import sk.patrikscerba.gym.dto.ClientUpdateRequest;
-import sk.patrikscerba.gym.service.ClientAccountService;
-import sk.patrikscerba.gym.service.ClientService;
+import sk.patrikscerba.gym.dto.client.ClientAccountResponse;
+import sk.patrikscerba.gym.dto.client.ClientCreateRequest;
+import sk.patrikscerba.gym.dto.client.ClientResponse;
+import sk.patrikscerba.gym.dto.client.ClientUpdateRequest;
+import sk.patrikscerba.gym.service.client.ClientAccountService;
+import sk.patrikscerba.gym.service.client.ClientService;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package sk.patrikscerba.gym.dto;
+package sk.patrikscerba.gym.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

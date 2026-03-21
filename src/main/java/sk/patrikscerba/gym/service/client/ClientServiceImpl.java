@@ -1,9 +1,9 @@
-package sk.patrikscerba.gym.service;
+package sk.patrikscerba.gym.service.client;
 
 import org.springframework.stereotype.Service;
-import sk.patrikscerba.gym.dto.ClientCreateRequest;
-import sk.patrikscerba.gym.dto.ClientResponse;
-import sk.patrikscerba.gym.dto.ClientUpdateRequest;
+import sk.patrikscerba.gym.dto.client.ClientCreateRequest;
+import sk.patrikscerba.gym.dto.client.ClientResponse;
+import sk.patrikscerba.gym.dto.client.ClientUpdateRequest;
 import sk.patrikscerba.gym.entity.ClientEntity;
 import sk.patrikscerba.gym.exception.BusinessException;
 import sk.patrikscerba.gym.exception.ConflictException;

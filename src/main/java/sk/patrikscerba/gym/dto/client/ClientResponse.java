@@ -1,4 +1,4 @@
-package sk.patrikscerba.gym.dto;
+package sk.patrikscerba.gym.dto.client;
 
 import java.time.LocalDate;
 

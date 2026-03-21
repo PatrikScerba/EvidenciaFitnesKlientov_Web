@@ -1,6 +1,6 @@
-package sk.patrikscerba.gym.service;
+package sk.patrikscerba.gym.service.user;
 
-import sk.patrikscerba.gym.dto.UserRegisterRequest;
+import sk.patrikscerba.gym.dto.auth.UserRegisterRequest;
 
 /**
  * Rozhranie pre servisnú vrstvu používateľa.

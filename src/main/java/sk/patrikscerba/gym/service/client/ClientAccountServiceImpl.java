@@ -1,10 +1,10 @@
-package sk.patrikscerba.gym.service;
+package sk.patrikscerba.gym.service.client;
 
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import sk.patrikscerba.gym.dto.ClientAccountResponse;
-import sk.patrikscerba.gym.dto.ClientCreateRequest;
+import sk.patrikscerba.gym.dto.client.ClientAccountResponse;
+import sk.patrikscerba.gym.dto.client.ClientCreateRequest;
 import sk.patrikscerba.gym.entity.ClientEntity;
 import sk.patrikscerba.gym.entity.UserEntity;
 import sk.patrikscerba.gym.enums.Role;

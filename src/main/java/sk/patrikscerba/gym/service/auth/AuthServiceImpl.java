@@ -1,4 +1,4 @@
-package sk.patrikscerba.gym.service;
+package sk.patrikscerba.gym.service.auth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -11,8 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
-import sk.patrikscerba.gym.dto.LoginRequest;
-import sk.patrikscerba.gym.dto.LoginResponse;
+import sk.patrikscerba.gym.dto.auth.LoginRequest;
+import sk.patrikscerba.gym.dto.auth.LoginResponse;
 import sk.patrikscerba.gym.entity.UserEntity;
 import sk.patrikscerba.gym.exception.BusinessException;
 import sk.patrikscerba.gym.repository.UserRepository;

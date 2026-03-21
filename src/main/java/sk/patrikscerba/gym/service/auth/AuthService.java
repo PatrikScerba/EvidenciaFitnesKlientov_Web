@@ -1,8 +1,8 @@
-package sk.patrikscerba.gym.service;
+package sk.patrikscerba.gym.service.auth;
 
 import jakarta.servlet.http.HttpServletRequest;
-import sk.patrikscerba.gym.dto.LoginRequest;
-import sk.patrikscerba.gym.dto.LoginResponse;
+import sk.patrikscerba.gym.dto.auth.LoginRequest;
+import sk.patrikscerba.gym.dto.auth.LoginResponse;
 
 /**
  * Servis pre autentifikáciu používateľa.

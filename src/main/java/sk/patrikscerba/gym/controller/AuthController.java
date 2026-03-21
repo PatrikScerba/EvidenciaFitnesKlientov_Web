@@ -4,9 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import sk.patrikscerba.gym.dto.LoginRequest;
-import sk.patrikscerba.gym.dto.LoginResponse;
-import sk.patrikscerba.gym.service.AuthService;
+import sk.patrikscerba.gym.dto.auth.LoginRequest;
+import sk.patrikscerba.gym.dto.auth.LoginResponse;
+import sk.patrikscerba.gym.service.auth.AuthService;
 
 /**
  * Controller zodpovedný za autentifikáciu používateľa.

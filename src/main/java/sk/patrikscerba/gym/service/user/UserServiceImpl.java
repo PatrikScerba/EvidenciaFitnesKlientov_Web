@@ -1,10 +1,10 @@
-package sk.patrikscerba.gym.service;
+package sk.patrikscerba.gym.service.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import sk.patrikscerba.gym.dto.UserRegisterRequest;
+import sk.patrikscerba.gym.dto.auth.UserRegisterRequest;
 import sk.patrikscerba.gym.entity.UserEntity;
 import sk.patrikscerba.gym.enums.Role;
 import sk.patrikscerba.gym.exception.BusinessException;

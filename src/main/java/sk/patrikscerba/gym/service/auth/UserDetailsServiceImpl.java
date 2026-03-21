@@ -1,4 +1,4 @@
-package sk.patrikscerba.gym.service;
+package sk.patrikscerba.gym.service.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;

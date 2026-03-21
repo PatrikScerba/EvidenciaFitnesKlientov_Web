@@ -1,4 +1,4 @@
-package sk.patrikscerba.gym.dto;
+package sk.patrikscerba.gym.dto.auth;
 
 /**
  * DTO objekt vracaný po úspešnom prihlásení používateľa.
