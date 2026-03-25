@@ -1,9 +1,31 @@
 import { useState } from "react";
 import { logout } from "./api/authApi";
 import Login from "./pages/auth/Login";
+import ClientRegister from "./pages/ClientRegister";
+import EmployeeRegister from "./pages/EmployeeRegister";
 
 export default function App() {
     const [user, setUser] = useState(null);
+    const [showClientRegister, setShowClientRegister] = useState(false);
+    const [showEmployeeRegister, setShowEmployeeRegister] = useState(false);
+
+    function handleShowEmployeeForm() {
+        if (showEmployeeRegister) {
+            setShowEmployeeRegister(false);
+        } else {
+            setShowEmployeeRegister(true);
+            setShowClientRegister(false);
+        }
+    }
+
+    function handleShowClientForm() {
+        if (showClientRegister) {
+            setShowClientRegister(false);
+        } else {
+            setShowClientRegister(true);
+            setShowEmployeeRegister(false);
+        }
+    }
 
     async function handleLogout() {
         try {
@@ -12,6 +34,8 @@ export default function App() {
             console.error("Odhlásenie zlyhalo:", err);
         } finally {
             setUser(null);
+            setShowClientRegister(false);
+            setShowEmployeeRegister(false);
         }
     }
 
@@ -21,8 +45,33 @@ export default function App() {
                 <div>
                     <h2>Admin panel</h2>
                     <p>Prihlásený ako admin: {user.email}</p>
-                    <button>Registrovať zamestnanca</button>
-                    <button>Registrovať klienta</button>
+
+                    <button
+                        style={{ marginRight: "10px" }}
+                        onClick={handleShowEmployeeForm}
+                    >
+                        {showEmployeeRegister
+                            ? "Zavrieť registráciu zamestnanca"
+                            : "Registrovať zamestnanca"}
+                    </button>
+
+                    <button onClick={handleShowClientForm}>
+                        {showClientRegister
+                            ? "Zavrieť registráciu klienta"
+                            : "Registrovať klienta"}
+                    </button>
+
+                    {showEmployeeRegister && (
+                        <div style={{ marginTop: "20px" }}>
+                            <EmployeeRegister />
+                        </div>
+                    )}
+
+                    {showClientRegister && (
+                        <div style={{ marginTop: "20px" }}>
+                            <ClientRegister />
+                        </div>
+                    )}
                 </div>
             );
         }
@@ -32,7 +81,18 @@ export default function App() {
                 <div>
                     <h2>Zamestnanecký panel</h2>
                     <p>Prihlásený ako zamestnanec: {user.email}</p>
-                    <button>Registrovať klienta</button>
+
+                    <button onClick={handleShowClientForm}>
+                        {showClientRegister
+                            ? "Zavrieť registráciu"
+                            : "Registrovať klienta"}
+                    </button>
+
+                    {showClientRegister && (
+                        <div style={{ marginTop: "20px" }}>
+                            <ClientRegister />
+                        </div>
+                    )}
                 </div>
             );
         }
@@ -41,7 +101,7 @@ export default function App() {
             <div>
                 <h2>Klientsky panel</h2>
                 <p>Prihlásený klient: {user.email}</p>
-                <button>Zobraziť moje údaje</button>
+                <pre>{JSON.stringify(user, null, 2)}</pre>
             </div>
         );
     }
@@ -63,3 +123,4 @@ export default function App() {
         </div>
     );
 }
+
