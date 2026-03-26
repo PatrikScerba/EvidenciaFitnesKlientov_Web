@@ -63,8 +63,7 @@ public class ApplicationSecurityConfiguration {
                 )
                 .authenticationProvider(authenticationProvider())
 
-                .httpBasic(Customizer.withDefaults())
-
+                .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(form -> form.disable());
 
         return http.build();
