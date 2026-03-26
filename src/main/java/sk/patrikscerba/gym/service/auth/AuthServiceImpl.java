@@ -37,9 +37,17 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public LoginResponse login(LoginRequest request, HttpServletRequest httpRequest) {
 
+
+        // Zruší starú session (napr. admin), aby sa zabránilo preneseniu role.
+        HttpSession oldSession = httpRequest.getSession(false);
+        if (oldSession != null) {
+            oldSession.invalidate();
+        }
+
         // Vyhľadá používateľa podľa emailu, ak neexistuje, vyhodí výnimku.
         UserEntity user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BusinessException("Nesprávny email alebo heslo."));
+        System.out.println("LOGIN USER: " + user.getEmail() + " ROLE: " + user.getRole());
 
         // Overí, či zadané heslo sedí s uloženým hashom v databáze.
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -53,6 +61,8 @@ public class AuthServiceImpl implements AuthService {
                         request.getPassword()
                 )
         );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // Vytvorí nový security context a uloží doň úspešne overeného používateľa.
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
@@ -85,6 +95,7 @@ public class AuthServiceImpl implements AuthService {
 
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessException("Používateľ neexistuje."));
+        System.out.println("ME USER: " + user.getEmail() + " ROLE: " + user.getRole());
 
         // Vytvorí odpoveď s údajmi o aktuálne prihlásenom používateľovi.
         LoginResponse response = new LoginResponse();
