@@ -11,6 +11,15 @@ public class LoginResponse {
     private String role;
     private Long clientId;
     private String message;
+    private boolean usingTemporaryPassword;
+
+    public boolean isUsingTemporaryPassword() {
+        return usingTemporaryPassword;
+    }
+
+    public void setUsingTemporaryPassword(boolean usingTemporaryPassword) {
+        this.usingTemporaryPassword = usingTemporaryPassword;
+    }
 
     public long getUserId() {
         return userId;

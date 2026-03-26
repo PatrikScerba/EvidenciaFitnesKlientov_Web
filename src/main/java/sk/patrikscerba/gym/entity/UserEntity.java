@@ -31,6 +31,17 @@ public class UserEntity {
     @JoinColumn(name = "client_id")
     private  ClientEntity client;
 
+    @Column(nullable = false)
+    private boolean usingTemporaryPassword = true;
+
+    public boolean isUsingTemporaryPassword() {
+        return usingTemporaryPassword;
+    }
+
+    public void setUsingTemporaryPassword(boolean usingTemporaryPassword) {
+        this.usingTemporaryPassword = usingTemporaryPassword;
+    }
+
     public ClientEntity getClient() {
         return client;
     }

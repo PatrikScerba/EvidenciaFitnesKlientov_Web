@@ -70,6 +70,7 @@ public class ClientAccountServiceImpl implements ClientAccountService {
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail(request.getEmail());
         userEntity.setPassword(passwordEncoder.encode(temporaryPassword));
+        userEntity.setUsingTemporaryPassword(true);
         userEntity.setRole(Role.CLIENT);
 
         userEntity.setClient(savedClient);

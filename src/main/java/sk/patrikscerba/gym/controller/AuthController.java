@@ -1,16 +1,20 @@
 package sk.patrikscerba.gym.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import sk.patrikscerba.gym.dto.auth.ChangePasswordRequest;
 import sk.patrikscerba.gym.dto.auth.LoginRequest;
 import sk.patrikscerba.gym.dto.auth.LoginResponse;
 import sk.patrikscerba.gym.service.auth.AuthService;
 
 /**
  * Controller zodpovedný za autentifikáciu používateľa.
- * Obsahuje endpoint pre prihlásenie do systému.
+ * Obsahuje endpointy pre prihlásenie, získanie aktuálne prihláseného používateľa
+ * a zmenu hesla.
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -32,6 +36,15 @@ public class AuthController {
     @GetMapping("/me")
     public LoginResponse getCurrentUser(Authentication authentication) {
         return authService.getCurrentUser(authentication.getName());
+    }
+
+    // Endpoint pre zmenu hesla prihláseného používateľa.
+    // Používateľ musí byť autentifikovaný (session).
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(@Valid @RequestBody ChangePasswordRequest request,
+                                                 Authentication authentication){
+        authService.changePassword(authentication.getName(), request);
+        return ResponseEntity.ok("Heslo bolo úspešne zmenené.");
     }
 }
 

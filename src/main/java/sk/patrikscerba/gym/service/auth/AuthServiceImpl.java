@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
+import sk.patrikscerba.gym.dto.auth.ChangePasswordRequest;
 import sk.patrikscerba.gym.dto.auth.LoginRequest;
 import sk.patrikscerba.gym.dto.auth.LoginResponse;
 import sk.patrikscerba.gym.entity.UserEntity;
@@ -36,12 +37,12 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public LoginResponse login(LoginRequest request, HttpServletRequest httpRequest) {
 
-        // Vyhľadá používateľa podľa emailu, ak neexistuje, vyhodí výnimku
+        // Vyhľadá používateľa podľa emailu, ak neexistuje, vyhodí výnimku.
         UserEntity user = userRepository.findByEmail(request.getEmail())
-        .orElseThrow(()-> new BusinessException("Nesprávny email alebo heslo."));
+                .orElseThrow(() -> new BusinessException("Nesprávny email alebo heslo."));
 
-        // Overí, či zadané heslo sedí s uloženým hashom v databáze
-        if (!passwordEncoder.matches(request.getPassword(),user.getPassword())){
+        // Overí, či zadané heslo sedí s uloženým hashom v databáze.
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BusinessException("Nesprávny email alebo heslo.");
         }
 
@@ -66,11 +67,12 @@ public class AuthServiceImpl implements AuthService {
                 securityContext
         );
 
-        // Vytvorí odpoveď s údajmi o prihlásenom používateľovi
+        // Vytvorí odpoveď s údajmi o prihlásenom používateľovi.
         LoginResponse response = new LoginResponse();
         response.setUserId(user.getUserId());
         response.setEmail(user.getEmail());
         response.setRole(user.getRole().name());
+        response.setUsingTemporaryPassword(user.isUsingTemporaryPassword());
         response.setClientId(user.getClient() != null ? user.getClient().getClientId() : null);
         response.setMessage("Prihlásenie bolo úspešné.");
 
@@ -89,8 +91,41 @@ public class AuthServiceImpl implements AuthService {
         response.setUserId(user.getUserId());
         response.setEmail(user.getEmail());
         response.setRole(user.getRole().name());
+        response.setUsingTemporaryPassword(user.isUsingTemporaryPassword());
         response.setClientId(user.getClient() != null ? user.getClient().getClientId() : null);
 
         return response;
     }
+
+    // Overí pôvodné heslo, nastaví nové heslo a označí, že používateľ už nepoužíva dočasné heslo.
+    @Override
+    public void changePassword(String email, ChangePasswordRequest request) {
+
+        // Nájde používateľa podľa emailu.
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException("Používateľ neexistuje."));
+
+        // Overí správnosť pôvodného hesla.
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new BusinessException("Pôvodné heslo nie je správne.");
+        }
+
+        // Overí zhodu nového hesla a potvrdenia.
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new BusinessException("Nové heslo a potvrdenie hesla sa nezhodujú.");
+        }
+
+        // Zabráni nastaveniu rovnakého hesla.
+        if (request.getOldPassword().equals(request.getNewPassword())) {
+            throw new BusinessException("Nové heslo sa musí líšiť od pôvodného hesla.");
+        }
+
+        // Nastaví nové heslo (hashované).
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setUsingTemporaryPassword(false);
+
+        userRepository.save(user);
+    }
 }
+
+

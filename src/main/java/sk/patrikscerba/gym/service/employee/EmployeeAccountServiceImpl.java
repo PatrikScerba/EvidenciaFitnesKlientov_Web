@@ -43,6 +43,7 @@ public class EmployeeAccountServiceImpl implements EmployeeAccountService {
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail(user.getEmail());
         userEntity.setPassword(passwordEncoder.encode(temporaryPassword));
+        userEntity.setUsingTemporaryPassword(true);
         userEntity.setRole(Role.EMPLOYEE);
 
         UserEntity savedUser;
