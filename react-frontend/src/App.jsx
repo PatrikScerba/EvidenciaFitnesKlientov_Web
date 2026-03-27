@@ -3,11 +3,13 @@ import { logout } from "./api/authApi";
 import Login from "./pages/auth/Login";
 import ClientRegister from "./pages/ClientRegister";
 import EmployeeRegister from "./pages/EmployeeRegister";
+import ChangePassword from "./pages/auth/ChangePassword";
 
 export default function App() {
     const [user, setUser] = useState(null);
     const [showClientRegister, setShowClientRegister] = useState(false);
     const [showEmployeeRegister, setShowEmployeeRegister] = useState(false);
+    const [showChangePassword, setShowChangePassword] = useState(false);
 
     function handleShowEmployeeForm() {
         if (showEmployeeRegister) {
@@ -27,7 +29,11 @@ export default function App() {
         }
     }
 
-    async function handleLogout() {
+    function handleShowChangePassword() {
+        setShowChangePassword(!showChangePassword);
+    }
+
+        async function handleLogout() {
         try {
             await logout();
         } catch (err) {
@@ -36,6 +42,7 @@ export default function App() {
             setUser(null);
             setShowClientRegister(false);
             setShowEmployeeRegister(false);
+            setShowChangePassword(false);
         }
     }
 
@@ -111,7 +118,37 @@ export default function App() {
             {user ? (
                 <div>
                     <h1>React ↔ Spring Boot</h1>
+
                     {renderDashboard()}
+
+                    {user.usingTemporaryPassword && (
+                        <div
+                            style={{
+                                marginTop: "20px",
+                                padding: "15px",
+                                border: "1px solid orange"
+                            }}
+                        >
+                            <p>Používate dočasné heslo. Môžete si ho zmeniť.</p>
+
+                            <button onClick={handleShowChangePassword}>
+                                {showChangePassword
+                                    ? "Zavrieť zmenu hesla"
+                                    : "Zmeniť heslo"}
+                            </button>
+                        </div>
+                    )}
+
+                    {showChangePassword && (
+                        <div style={{ marginTop: "20px" }}>
+                            <ChangePassword
+                                onPasswordChanged={(updatedUser) => {
+                                    setUser(updatedUser);
+                                    setShowChangePassword(false);
+                                }}
+                            />
+                        </div>
+                    )}
 
                     <div style={{ marginTop: "20px" }}>
                         <button onClick={handleLogout}>Odhlásiť sa</button>
@@ -123,4 +160,3 @@ export default function App() {
         </div>
     );
 }
-

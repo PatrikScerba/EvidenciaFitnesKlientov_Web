@@ -19,8 +19,10 @@ export async function getCurrentUser() {
     });
 }
 
-
-
-
-
+export async function changePassword(passwordData) {
+    return apiFetch("/api/auth/change-password", {
+        method: "POST",
+        body: JSON.stringify(passwordData)
+    });
+}
 
