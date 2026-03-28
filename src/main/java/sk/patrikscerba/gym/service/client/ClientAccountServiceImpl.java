@@ -20,7 +20,8 @@ import java.time.Period;
 /**
  * Implementácia servisnej vrstvy pre registráciu klienta spolu s vytvorením používateľského účtu.
  * Trieda zabezpečuje validáciu veku klienta, kontrolu duplicity emailu, vytvorenie klienta,
- * založenie prihlasovacieho účtu s dočasným heslom a zostavenie odpovede pre frontend.
+ * založenie účtu s dočasným heslom, uloženie bezpečnostnej otázky, odpovede
+ * a informáciu o používaní dočasného hesla s možnosťou jeho zmeny.
  */
 @Service
 public class ClientAccountServiceImpl implements ClientAccountService {
@@ -52,7 +53,14 @@ public class ClientAccountServiceImpl implements ClientAccountService {
             throw new ConflictException("Používateľ s emailom už existuje:" + request.getEmail());
         }
 
-        // Zostavenie odpovede, ktorú backend pošle frontendu.
+        String securityAnswer = request.getSecurityAnswer().trim().toLowerCase();
+        String confirmSecurityAnswer = request.getConfirmSecurityAnswer().trim().toLowerCase();
+
+        if (!securityAnswer.equals(confirmSecurityAnswer)) {
+            throw new BusinessException("Bezpečnostné odpovede sa nezhodujú.");
+        }
+
+        // Vytvorenie a naplnenie entity klienta.
         ClientEntity clientEntity = new ClientEntity();
         clientEntity.setFirstName(request.getFirstName());
         clientEntity.setLastName(request.getLastName());
@@ -71,7 +79,10 @@ public class ClientAccountServiceImpl implements ClientAccountService {
         userEntity.setEmail(request.getEmail());
         userEntity.setPassword(passwordEncoder.encode(temporaryPassword));
         userEntity.setUsingTemporaryPassword(true);
+        userEntity.setPasswordChangeRequired(true);
         userEntity.setRole(Role.CLIENT);
+        userEntity.setSecurityQuestion(request.getSecurityQuestion());
+        userEntity.setSecurityAnswerHash(passwordEncoder.encode(securityAnswer));
 
         userEntity.setClient(savedClient);
 

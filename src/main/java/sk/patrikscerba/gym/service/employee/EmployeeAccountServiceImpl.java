@@ -1,5 +1,6 @@
 package sk.patrikscerba.gym.service.employee;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -8,6 +9,7 @@ import sk.patrikscerba.gym.dto.employee.EmployeeAccountResponse;
 import sk.patrikscerba.gym.dto.employee.EmployeeCreateRequest;
 import sk.patrikscerba.gym.entity.UserEntity;
 import sk.patrikscerba.gym.enums.Role;
+import sk.patrikscerba.gym.exception.BusinessException;
 import sk.patrikscerba.gym.exception.ConflictException;
 import sk.patrikscerba.gym.repository.UserRepository;
 
@@ -16,7 +18,8 @@ import java.security.SecureRandom;
 /**
  * Implementácia servisnej vrstvy pre vytvorenie účtu zamestnanca.
  * Trieda zabezpečuje kontrolu duplicity emailu, vygenerovanie dočasného hesla,
- *  uloženie používateľa s rolou zamestnanca a zostavenie odpovede pre frontend.
+ * uloženie používateľa s rolou zamestnanca, uloženie bezpečnostnej otázky, odpovede
+ * a informáciu o používaní dočasného hesla s možnosťou jeho zmeny.
  */
 @Service
 public class EmployeeAccountServiceImpl implements EmployeeAccountService {
@@ -29,11 +32,19 @@ public class EmployeeAccountServiceImpl implements EmployeeAccountService {
 
     // Vytvorí nový účet zamestnanca.
     @Override
-    public EmployeeAccountResponse create(EmployeeCreateRequest user) {
+    @Transactional
+    public EmployeeAccountResponse create(EmployeeCreateRequest request) {
 
         // Kontrola, či email už nie je zaregistrovaný.
-        if (userRepository.existsByEmail(user.getEmail())) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new ConflictException("Email je už zaregistrovaný.");
+        }
+
+        String securityAnswer = request.getSecurityAnswer().trim().toLowerCase();
+        String confirmSecurityAnswer = request.getConfirmSecurityAnswer().trim().toLowerCase();
+
+        if (!securityAnswer.equals(confirmSecurityAnswer)) {
+            throw new BusinessException("Bezpečnostné odpovede sa nezhodujú.");
         }
 
         // Vygenerovanie dočasného hesla pre nový účet.
@@ -41,10 +52,13 @@ public class EmployeeAccountServiceImpl implements EmployeeAccountService {
 
         // Nastavenie údajov používateľa.
         UserEntity userEntity = new UserEntity();
-        userEntity.setEmail(user.getEmail());
+        userEntity.setEmail(request.getEmail());
         userEntity.setPassword(passwordEncoder.encode(temporaryPassword));
         userEntity.setUsingTemporaryPassword(true);
+        userEntity.setPasswordChangeRequired(true);
         userEntity.setRole(Role.EMPLOYEE);
+        userEntity.setSecurityQuestion(request.getSecurityQuestion());
+        userEntity.setSecurityAnswerHash(passwordEncoder.encode(securityAnswer));
 
         UserEntity savedUser;
 
