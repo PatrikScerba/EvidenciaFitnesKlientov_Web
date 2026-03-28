@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import sk.patrikscerba.gym.enums.Role;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import sk.patrikscerba.gym.enums.SecurityQuestion;
 
 /**
  * Entita reprezentujúca používateľa systému.
- * Uchováva prihlasovacie údaje a rolu používateľa v databáze.
+ * Uchováva prihlasovacie údaje, rolu, bezpečnostnú otázku,
+ * hash bezpečnostnej odpovede a stav hesla používateľa v databáze.
  */
 @Entity
 @Table(name = "users")
@@ -33,6 +35,40 @@ public class UserEntity {
 
     @Column(nullable = false)
     private boolean usingTemporaryPassword = true;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "security_question", nullable = false, length = 100)
+    private SecurityQuestion securityQuestion;
+
+    @Column(name = "security_answer_hash", nullable = false)
+    private String securityAnswerHash;
+
+    @Column(name = "password_change_required", nullable = false)
+    private boolean passwordChangeRequired;
+
+    public SecurityQuestion getSecurityQuestion() {
+        return securityQuestion;
+    }
+
+    public void setSecurityQuestion(SecurityQuestion securityQuestion) {
+        this.securityQuestion = securityQuestion;
+    }
+
+    public String getSecurityAnswerHash() {
+        return securityAnswerHash;
+    }
+
+    public void setSecurityAnswerHash(String securityAnswerHash) {
+        this.securityAnswerHash = securityAnswerHash;
+    }
+
+    public boolean isPasswordChangeRequired() {
+        return passwordChangeRequired;
+    }
+
+    public void setPasswordChangeRequired(boolean passwordChangeRequired) {
+        this.passwordChangeRequired = passwordChangeRequired;
+    }
 
     public boolean isUsingTemporaryPassword() {
         return usingTemporaryPassword;
