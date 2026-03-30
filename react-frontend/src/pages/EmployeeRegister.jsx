@@ -3,6 +3,9 @@ import { useState } from "react";
 export default function EmployeeRegister() {
   const [form, setForm] = useState({
     email: "",
+    securityQuestion: "",
+    securityAnswer: "",
+    confirmSecurityAnswer: "",
   });
 
   const [result, setResult] = useState(null);
@@ -24,14 +27,17 @@ export default function EmployeeRegister() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8080/api/admin/employees", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(form),
-      });
+      const response = await fetch(
+        "http://localhost:8080/api/admin/employees",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(form),
+        }
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -43,6 +49,9 @@ export default function EmployeeRegister() {
 
       setForm({
         email: "",
+        securityQuestion: "",
+        securityAnswer: "",
+        confirmSecurityAnswer: "",
       });
     } catch (err) {
       setError(err.message || "Nastala chyba.");
@@ -55,15 +64,76 @@ export default function EmployeeRegister() {
     <div style={{ padding: "30px", maxWidth: "500px" }}>
       <h2>Test registrácie zamestnanca</h2>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} autoComplete="off">
         <input
           type="email"
           name="email"
+          autoComplete="off"
           placeholder="Email"
           value={form.email}
           onChange={handleChange}
         />
-        <br /><br />
+        <br />
+        <br />
+
+        <div>
+          <label>Bezpečnostná otázka</label>
+          <select
+            name="securityQuestion"
+            value={form.securityQuestion}
+            onChange={handleChange}
+          >
+            <option value="">-- Vyber otázku --</option>
+            <option value="PET_NAME">
+              Ako sa volal tvoj prvý domáci miláčik?
+            </option>
+            <option value="BIRTH_CITY">V akom meste si sa narodil?</option>
+            <option value="CHILDHOOD_NICKNAME">
+              Ako sa volala tvoja detská prezývka?
+            </option>
+            <option value="FAVORITE_TEACHER">Meno obľúbeného učiteľa?</option>
+            <option value="STREET_GROWING_UP">
+              Názov ulice kde ste vyrastali?
+            </option>
+            <option value="FIRST_SCHOOL">
+              Ako sa volala tvoja prvá škola?
+            </option>
+            <option value="MOTHER_MAIDEN_NAME">
+              Aké bolo rodné priezvisko tvojej mamy?
+            </option>
+            <option value="FAVORITE_SINGER_CHILDHOOD">
+              Kto bol tvoj obľúbený spevák v detstve?
+            </option>
+            <option value="FIRST_CAR">
+              Aká bola značka tvojho prvého auta?
+            </option>
+            <option value="DREAM_JOB_CHILDHOOD">
+              Aké bolo tvoje vysnívané povolanie v detstve?
+            </option>
+          </select>
+        </div>
+
+        <div>
+          <label>Bezpečnostná odpoveď</label>
+          <input
+            type="password"
+            name="securityAnswer"
+            autoComplete="new-password"
+            value={form.securityAnswer}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div>
+          <label>Potvrdenie bezpečnostnej odpovede</label>
+          <input
+            type="password"
+            name="confirmSecurityAnswer"
+            autoComplete="off"
+            value={form.confirmSecurityAnswer}
+            onChange={handleChange}
+          />
+        </div>
 
         <button type="submit" disabled={loading}>
           {loading ? "Odosiela sa..." : "Registrovať zamestnanca"}
@@ -78,12 +148,17 @@ export default function EmployeeRegister() {
 
       {result && (
         <div style={{ marginTop: "20px" }}>
-          <p><strong>Email:</strong> {result.email}</p>
-          <p><strong>Dočasné heslo:</strong> {result.temporaryPassword}</p>
-          <p><strong>Správa:</strong> {result.message}</p>
+          <p>
+            <strong>Email:</strong> {result.email}
+          </p>
+          <p>
+            <strong>Dočasné heslo:</strong> {result.temporaryPassword}
+          </p>
+          <p>
+            <strong>Správa:</strong> {result.message}
+          </p>
         </div>
       )}
     </div>
   );
 }
-
