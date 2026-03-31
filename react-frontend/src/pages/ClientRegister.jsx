@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createClient } from "../api/clientApi";
 
 export default function ClientRegister() {
   const [form, setForm] = useState({
@@ -31,41 +32,27 @@ export default function ClientRegister() {
     setResult(null);
     setLoading(true);
 
-    try {
-      const response = await fetch("http://localhost:8080/api/clients", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(form),
-      });
+       try {
+         const response = await createClient(form);
+         setResult(response);
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Registrácia klienta zlyhala.");
-      }
-
-      const data = await response.json();
-      setResult(data);
-
-      setForm({
-        firstName: "",
-        lastName: "",
-        dateOfBirth: "",
-        phoneNumber: "",
-        address: "",
-        email: "",
-        securityQuestion: "",
-        securityAnswer: "",
-        confirmSecurityAnswer: "",
-      });
-    } catch (err) {
-      setError(err.message || "Nastala chyba.");
-    } finally {
-      setLoading(false);
-    }
-  }
+         setForm({
+           firstName: "",
+           lastName: "",
+           dateOfBirth: "",
+           phoneNumber: "",
+           address: "",
+           email: "",
+           securityQuestion: "",
+           securityAnswer: "",
+           confirmSecurityAnswer: "",
+         });
+       } catch (err) {
+         setError(err.message || "Nastala chyba.");
+       } finally {
+         setLoading(false);
+       }
+     }
 
   return (
     <div style={{ padding: "30px", maxWidth: "500px" }}>

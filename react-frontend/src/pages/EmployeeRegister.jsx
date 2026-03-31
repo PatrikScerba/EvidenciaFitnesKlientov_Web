@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createEmployee } from "../api/adminApi";
 
 export default function EmployeeRegister() {
   const [form, setForm] = useState({
@@ -27,25 +28,8 @@ export default function EmployeeRegister() {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        "http://localhost:8080/api/admin/employees",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(form),
-        }
-      );
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Registrácia zamestnanca zlyhala.");
-      }
-
-      const data = await response.json();
-      setResult(data);
+        const response = await createEmployee(form);
+        setResult(response);
 
       setForm({
         email: "",
