@@ -5,6 +5,7 @@ import ClientRegister from "./pages/ClientRegister";
 import EmployeeRegister from "./pages/EmployeeRegister";
 import ChangePassword from "./pages/auth/ChangePassword";
 import AdminPasswordReset from "./pages/admin/AdminPasswordReset";
+import ClientList from "./pages/clients/ClientList";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -12,6 +13,7 @@ export default function App() {
   const [showEmployeeRegister, setShowEmployeeRegister] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showAdminPasswordReset, setShowAdminPasswordReset] = useState(false);
+  const [showClientList, setShowClientList] = useState(false);
 
   function handleShowEmployeeForm() {
     if (showEmployeeRegister) {
@@ -22,6 +24,7 @@ export default function App() {
       setShowClientRegister(false);
       setShowChangePassword(false);
       setShowAdminPasswordReset(false);
+      setShowClientList(false);
     }
   }
 
@@ -33,6 +36,7 @@ export default function App() {
       setShowEmployeeRegister(false);
       setShowChangePassword(false);
       setShowAdminPasswordReset(false);
+      setShowClientList(false);
     }
   }
 
@@ -44,13 +48,28 @@ export default function App() {
       setShowClientRegister(false);
       setShowEmployeeRegister(false);
       setShowAdminPasswordReset(false);
+      setShowClientList(false);
     }
   }
+
   function handleShowAdminPasswordReset() {
     if (showAdminPasswordReset) {
       setShowAdminPasswordReset(false);
     } else {
       setShowAdminPasswordReset(true);
+      setShowClientRegister(false);
+      setShowEmployeeRegister(false);
+      setShowChangePassword(false);
+      setShowClientList(false);
+    }
+  }
+
+  function handleShowClientList() {
+    if (showClientList) {
+      setShowClientList(false);
+    } else {
+      setShowClientList(true);
+      setShowAdminPasswordReset(false);
       setShowClientRegister(false);
       setShowEmployeeRegister(false);
       setShowChangePassword(false);
@@ -68,6 +87,7 @@ export default function App() {
       setShowEmployeeRegister(false);
       setShowChangePassword(false);
       setShowAdminPasswordReset(false);
+      setShowClientList(false);
     }
   }
 
@@ -102,6 +122,16 @@ export default function App() {
               : "Reset hesla používateľa"}
           </button>
 
+          <button onClick={handleShowClientList}>
+            {showClientList ? "Zavrieť zoznam klientov" : "Zobraziť klientov"}
+          </button>
+
+          {showClientList && (
+            <div style={{ marginTop: "20px" }}>
+              <ClientList />
+            </div>
+          )}
+
           {showEmployeeRegister && (
             <div style={{ marginTop: "20px" }}>
               <EmployeeRegister />
@@ -131,6 +161,16 @@ export default function App() {
           <button onClick={handleShowClientForm}>
             {showClientRegister ? "Zavrieť registráciu" : "Registrovať klienta"}
           </button>
+
+          <button onClick={handleShowClientList}>
+            {showClientList ? "Zavrieť zoznam klientov" : "Zobraziť klientov"}
+          </button>
+
+          {showClientList && (
+            <div style={{ marginTop: "20px" }}>
+              <ClientList />
+            </div>
+          )}
 
           {showClientRegister && (
             <div style={{ marginTop: "20px" }}>

@@ -6,3 +6,7 @@ export async function createClient(clientData) {
     body: JSON.stringify(clientData),
   });
 }
+
+export async function getAllClients() {
+  return apiFetch("/api/clients");
+}
