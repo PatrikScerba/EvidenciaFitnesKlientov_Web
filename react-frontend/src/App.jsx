@@ -6,6 +6,8 @@ import EmployeeRegister from "./pages/EmployeeRegister";
 import ChangePassword from "./pages/auth/ChangePassword";
 import AdminPasswordReset from "./pages/admin/AdminPasswordReset";
 import ClientList from "./pages/clients/ClientList";
+import ClientSearch from "./pages/clients/ClientSearch";
+import { searchClients } from "./api/clientApi";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -14,6 +16,10 @@ export default function App() {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showAdminPasswordReset, setShowAdminPasswordReset] = useState(false);
   const [showClientList, setShowClientList] = useState(false);
+  const [showClientSearch, setShowClientSearch] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [loadingSearch, setLoadingSearch] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
   function handleShowEmployeeForm() {
     if (showEmployeeRegister) {
@@ -25,6 +31,7 @@ export default function App() {
       setShowChangePassword(false);
       setShowAdminPasswordReset(false);
       setShowClientList(false);
+      setShowClientSearch(false);
     }
   }
 
@@ -37,6 +44,7 @@ export default function App() {
       setShowChangePassword(false);
       setShowAdminPasswordReset(false);
       setShowClientList(false);
+      setShowClientSearch(false);
     }
   }
 
@@ -49,6 +57,7 @@ export default function App() {
       setShowEmployeeRegister(false);
       setShowAdminPasswordReset(false);
       setShowClientList(false);
+      setShowClientSearch(false);
     }
   }
 
@@ -61,6 +70,7 @@ export default function App() {
       setShowEmployeeRegister(false);
       setShowChangePassword(false);
       setShowClientList(false);
+      setShowClientSearch(false);
     }
   }
 
@@ -73,6 +83,28 @@ export default function App() {
       setShowClientRegister(false);
       setShowEmployeeRegister(false);
       setShowChangePassword(false);
+      setShowClientSearch(false);
+    }
+  }
+
+  async function handleClientSearch(filters) {
+    if (filters === null) {
+      setSearchResults([]);
+      setHasSearched(false);
+      return;
+    }
+
+    try {
+      setLoadingSearch(true);
+      setHasSearched(true);
+
+      const data = await searchClients(filters);
+      setSearchResults(data);
+    } catch (err) {
+      console.error("Vyhľadávanie zlyhalo:", err);
+      setSearchResults([]);
+    } finally {
+      setLoadingSearch(false);
     }
   }
 
@@ -88,6 +120,23 @@ export default function App() {
       setShowChangePassword(false);
       setShowAdminPasswordReset(false);
       setShowClientList(false);
+      setShowClientSearch(false);
+    }
+  }
+  function handleShowClientSearch() {
+    if (showClientSearch) {
+      setShowClientSearch(false);
+      setSearchResults([]);
+      setHasSearched(false);
+    } else {
+      setShowClientSearch(true);
+      setShowClientRegister(false);
+      setShowEmployeeRegister(false);
+      setShowChangePassword(false);
+      setShowAdminPasswordReset(false);
+      setShowClientList(false);
+      setSearchResults([]);
+      setHasSearched(false);
     }
   }
 
@@ -126,9 +175,61 @@ export default function App() {
             {showClientList ? "Zavrieť zoznam klientov" : "Zobraziť klientov"}
           </button>
 
+          <button
+            style={{ marginRight: "10px" }}
+            onClick={handleShowClientSearch}
+          >
+            {showClientSearch
+              ? "Zavrieť vyhľadávanie klientov"
+              : "Vyhľadať klienta"}
+          </button>
+
           {showClientList && (
             <div style={{ marginTop: "20px" }}>
               <ClientList />
+            </div>
+          )}
+
+          {showClientSearch && (
+            <div style={{ marginTop: "20px" }}>
+              <ClientSearch
+                onSearch={handleClientSearch}
+                loading={loadingSearch}
+              />
+
+              <div style={{ marginTop: "20px" }}>
+                {hasSearched &&
+                  (searchResults.length === 0 ? (
+                    <p>Nenašli sa žiadni klienti.</p>
+                  ) : (
+                    <table border="1" cellPadding="8">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Meno</th>
+                          <th>Priezvisko</th>
+                          <th>Dátum narodenia</th>
+                          <th>Telefón</th>
+                          <th>Adresa</th>
+                          <th>Email</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {searchResults.map((client) => (
+                          <tr key={client.clientId}>
+                            <td>{client.clientId}</td>
+                            <td>{client.firstName}</td>
+                            <td>{client.lastName}</td>
+                            <td>{client.dateOfBirth}</td>
+                            <td>{client.phoneNumber}</td>
+                            <td>{client.address}</td>
+                            <td>{client.email}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ))}
+              </div>
             </div>
           )}
 
@@ -165,6 +266,58 @@ export default function App() {
           <button onClick={handleShowClientList}>
             {showClientList ? "Zavrieť zoznam klientov" : "Zobraziť klientov"}
           </button>
+
+          <button
+            style={{ marginRight: "10px" }}
+            onClick={handleShowClientSearch}
+          >
+            {showClientSearch
+              ? "Zavrieť vyhľadávanie klientov"
+              : "Vyhľadať klienta"}
+          </button>
+
+          {showClientSearch && (
+            <div style={{ marginTop: "20px" }}>
+              <ClientSearch
+                onSearch={handleClientSearch}
+                loading={loadingSearch}
+              />
+
+              <div style={{ marginTop: "20px" }}>
+                {hasSearched &&
+                  (searchResults.length === 0 ? (
+                    <p>Nenašli sa žiadni klienti.</p>
+                  ) : (
+                    <table border="1" cellPadding="8">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Meno</th>
+                          <th>Priezvisko</th>
+                          <th>Dátum narodenia</th>
+                          <th>Telefón</th>
+                          <th>Adresa</th>
+                          <th>Email</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {searchResults.map((client) => (
+                          <tr key={client.clientId}>
+                            <td>{client.clientId}</td>
+                            <td>{client.firstName}</td>
+                            <td>{client.lastName}</td>
+                            <td>{client.dateOfBirth}</td>
+                            <td>{client.phoneNumber}</td>
+                            <td>{client.address}</td>
+                            <td>{client.email}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ))}
+              </div>
+            </div>
+          )}
 
           {showClientList && (
             <div style={{ marginTop: "20px" }}>
