@@ -33,4 +33,9 @@ export async function searchClients({ firstName = "", lastName = "", email = "" 
   );
 }
 
+export async function getMyClient() {
+    return apiFetch("/api/clients/me");
+}
+
+
 

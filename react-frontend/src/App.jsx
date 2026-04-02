@@ -8,6 +8,7 @@ import AdminPasswordReset from "./pages/admin/AdminPasswordReset";
 import ClientList from "./pages/clients/ClientList";
 import ClientSearch from "./pages/clients/ClientSearch";
 import { searchClients } from "./api/clientApi";
+import ClientDetail from "./pages/clients/ClientDetail";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -101,7 +102,6 @@ export default function App() {
       const data = await searchClients(filters);
       setSearchResults(data);
     } catch (err) {
-      console.error("Vyhľadávanie zlyhalo:", err);
       setSearchResults([]);
     } finally {
       setLoadingSearch(false);
@@ -112,7 +112,6 @@ export default function App() {
     try {
       await logout();
     } catch (err) {
-      console.error("Odhlásenie zlyhalo:", err);
     } finally {
       setUser(null);
       setShowClientRegister(false);
@@ -338,7 +337,7 @@ export default function App() {
       <div>
         <h2>Klientsky panel</h2>
         <p>Prihlásený klient: {user.email}</p>
-        <pre>{JSON.stringify(user, null, 2)}</pre>
+        <ClientDetail />
       </div>
     );
   }
