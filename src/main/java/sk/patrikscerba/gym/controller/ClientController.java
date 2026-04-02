@@ -3,6 +3,7 @@ package sk.patrikscerba.gym.controller;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import sk.patrikscerba.gym.dto.client.ClientAccountResponse;
 import sk.patrikscerba.gym.dto.client.ClientCreateRequest;
@@ -85,5 +86,13 @@ public class ClientController {
             @RequestParam(required = false) String email
     ) {
         return ResponseEntity.ok(clientService.searchClients(firstName, lastName, email));
+    }
+
+    // Endpoint na získanie detailu klienta, ktorý je aktuálne prihlásený (podľa emailu z Authentication).
+    @GetMapping("/me")
+    public ResponseEntity<ClientResponse> getMyClient(Authentication authentication) {
+        return ResponseEntity.ok(
+                clientService.getClientByEmail(authentication.getName())
+        );
     }
 }

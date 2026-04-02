@@ -24,4 +24,5 @@ public interface ClientService {
 
     List<ClientResponse> searchClients(String firstName, String lastName, String email);
 
+    ClientResponse getClientByEmail(String email);
 }

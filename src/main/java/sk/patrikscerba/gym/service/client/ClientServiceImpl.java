@@ -80,6 +80,18 @@ public class ClientServiceImpl implements ClientService {
                 .toList();
     }
 
+    // Získanie klienta podľa emailu.
+    @Override
+    public ClientResponse getClientByEmail(String email) {
+
+        ClientEntity entity = clientRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new NotFoundException("Klient neexistuje pre email=" + email)
+                );
+
+        return mapToResponse(entity);
+    }
+
     // Aktualizácia existujúceho klienta podľa ID.
     @Override
     public ClientResponse updateClient(Long id, ClientUpdateRequest request) {
