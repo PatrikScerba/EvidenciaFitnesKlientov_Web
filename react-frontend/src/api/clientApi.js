@@ -11,7 +11,11 @@ export async function getAllClients() {
   return apiFetch("/api/clients");
 }
 
-export async function searchClients({ firstName = "", lastName = "", email = "" }) {
+export async function searchClients({
+  firstName = "",
+  lastName = "",
+  email = "",
+}) {
   const params = new URLSearchParams();
 
   if (firstName.trim()) {
@@ -34,8 +38,12 @@ export async function searchClients({ firstName = "", lastName = "", email = "" 
 }
 
 export async function getMyClient() {
-    return apiFetch("/api/clients/me");
+  return apiFetch("/api/clients/me");
 }
 
-
-
+export async function updateClient(id, clientData) {
+  return apiFetch(`/api/clients/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(clientData),
+  });
+}

@@ -9,6 +9,7 @@ import ClientList from "./pages/clients/ClientList";
 import ClientSearch from "./pages/clients/ClientSearch";
 import { searchClients } from "./api/clientApi";
 import ClientDetail from "./pages/clients/ClientDetail";
+import ClientEdit from "./pages/clients/ClientEdit";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -21,6 +22,8 @@ export default function App() {
   const [searchResults, setSearchResults] = useState([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [editingClient, setEditingClient] = useState(null);
+  const [clientListRefresh, setClientListRefresh] = useState(0);
 
   function handleShowEmployeeForm() {
     if (showEmployeeRegister) {
@@ -33,6 +36,7 @@ export default function App() {
       setShowAdminPasswordReset(false);
       setShowClientList(false);
       setShowClientSearch(false);
+      setEditingClient(null);
     }
   }
 
@@ -46,6 +50,7 @@ export default function App() {
       setShowAdminPasswordReset(false);
       setShowClientList(false);
       setShowClientSearch(false);
+      setEditingClient(null);
     }
   }
 
@@ -59,6 +64,7 @@ export default function App() {
       setShowAdminPasswordReset(false);
       setShowClientList(false);
       setShowClientSearch(false);
+      setEditingClient(null);
     }
   }
 
@@ -72,12 +78,14 @@ export default function App() {
       setShowChangePassword(false);
       setShowClientList(false);
       setShowClientSearch(false);
+      setEditingClient(null);
     }
   }
 
   function handleShowClientList() {
     if (showClientList) {
       setShowClientList(false);
+      setEditingClient(null);
     } else {
       setShowClientList(true);
       setShowAdminPasswordReset(false);
@@ -85,7 +93,35 @@ export default function App() {
       setShowEmployeeRegister(false);
       setShowChangePassword(false);
       setShowClientSearch(false);
+      setEditingClient(null);
     }
+  }
+
+  function handleShowClientSearch() {
+    if (showClientSearch) {
+      setShowClientSearch(false);
+      setSearchResults([]);
+      setHasSearched(false);
+    } else {
+      setShowClientSearch(true);
+      setShowClientRegister(false);
+      setShowEmployeeRegister(false);
+      setShowChangePassword(false);
+      setShowAdminPasswordReset(false);
+      setShowClientList(false);
+      setSearchResults([]);
+      setHasSearched(false);
+      setEditingClient(null);
+    }
+  }
+
+  function handleEditClient(client) {
+    setEditingClient(client);
+    setShowClientSearch(false);
+    setShowClientRegister(false);
+    setShowEmployeeRegister(false);
+    setShowChangePassword(false);
+    setShowAdminPasswordReset(false);
   }
 
   async function handleClientSearch(filters) {
@@ -120,22 +156,7 @@ export default function App() {
       setShowAdminPasswordReset(false);
       setShowClientList(false);
       setShowClientSearch(false);
-    }
-  }
-  function handleShowClientSearch() {
-    if (showClientSearch) {
-      setShowClientSearch(false);
-      setSearchResults([]);
-      setHasSearched(false);
-    } else {
-      setShowClientSearch(true);
-      setShowClientRegister(false);
-      setShowEmployeeRegister(false);
-      setShowChangePassword(false);
-      setShowAdminPasswordReset(false);
-      setShowClientList(false);
-      setSearchResults([]);
-      setHasSearched(false);
+      setEditingClient(null);
     }
   }
 
@@ -185,7 +206,24 @@ export default function App() {
 
           {showClientList && (
             <div style={{ marginTop: "20px" }}>
-              <ClientList />
+              <ClientList
+                onEdit={handleEditClient}
+                refreshKey={clientListRefresh}
+              />
+            </div>
+          )}
+
+          {editingClient && (
+            <div style={{ marginTop: "20px" }}>
+              <ClientEdit
+                client={editingClient}
+                onCancel={() => setEditingClient(null)}
+                onUpdated={() => {
+                  setEditingClient(null);
+                  setShowClientList(true);
+                  setClientListRefresh((prev) => prev + 1);
+                }}
+              />
             </div>
           )}
 
@@ -211,6 +249,7 @@ export default function App() {
                           <th>Telefón</th>
                           <th>Adresa</th>
                           <th>Email</th>
+                          <th>Akcie</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -223,6 +262,11 @@ export default function App() {
                             <td>{client.phoneNumber}</td>
                             <td>{client.address}</td>
                             <td>{client.email}</td>
+                            <td>
+                              <button onClick={() => handleEditClient(client)}>
+                                Upraviť údaje
+                              </button>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -252,6 +296,7 @@ export default function App() {
         </div>
       );
     }
+
     if (user.role === "EMPLOYEE") {
       return (
         <div>
@@ -297,6 +342,7 @@ export default function App() {
                           <th>Telefón</th>
                           <th>Adresa</th>
                           <th>Email</th>
+                          <th>Akcie</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -309,6 +355,11 @@ export default function App() {
                             <td>{client.phoneNumber}</td>
                             <td>{client.address}</td>
                             <td>{client.email}</td>
+                            <td>
+                              <button onClick={() => handleEditClient(client)}>
+                                Upraviť údaje
+                              </button>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -320,7 +371,24 @@ export default function App() {
 
           {showClientList && (
             <div style={{ marginTop: "20px" }}>
-              <ClientList />
+              <ClientList
+                onEdit={handleEditClient}
+                refreshKey={clientListRefresh}
+              />
+            </div>
+          )}
+
+          {editingClient && (
+            <div style={{ marginTop: "20px" }}>
+              <ClientEdit
+                client={editingClient}
+                onCancel={() => setEditingClient(null)}
+                onUpdated={() => {
+                  setEditingClient(null);
+                  setShowClientList(true);
+                  setClientListRefresh((prev) => prev + 1);
+                }}
+              />
             </div>
           )}
 

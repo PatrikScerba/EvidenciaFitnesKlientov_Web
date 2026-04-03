@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { getAllClients } from "../../api/clientApi";
 
-export default function ClientList() {
+export default function ClientList({ onEdit, refreshKey }) {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     fetchClients();
-  }, []);
+  }, [refreshKey]);
 
   async function fetchClients() {
     setLoading(true);
@@ -44,6 +44,7 @@ export default function ClientList() {
               <th>Telefón</th>
               <th>Adresa</th>
               <th>Email</th>
+              <th>Akcie</th>
             </tr>
           </thead>
           <tbody>
@@ -56,6 +57,9 @@ export default function ClientList() {
                 <td>{client.phoneNumber}</td>
                 <td>{client.address}</td>
                 <td>{client.email}</td>
+                <td>
+                  <button onClick={() => onEdit(client)}>Upraviť</button>
+                </td>
               </tr>
             ))}
           </tbody>
