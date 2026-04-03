@@ -9,6 +9,7 @@ import sk.patrikscerba.gym.exception.BusinessException;
 import sk.patrikscerba.gym.exception.ConflictException;
 import sk.patrikscerba.gym.exception.NotFoundException;
 import sk.patrikscerba.gym.repository.ClientRepository;
+import sk.patrikscerba.gym.repository.UserRepository;
 
 import java.util.List;
 
@@ -21,9 +22,11 @@ public class ClientServiceImpl implements ClientService {
 
     // Repository pre prácu s databázou klientov.
     private final ClientRepository clientRepository;
+    private final UserRepository userRepository;
 
     // Konštruktor na injektovanie repository vrstvy.
-    public ClientServiceImpl(ClientRepository clientRepository) {
+    public ClientServiceImpl(ClientRepository clientRepository, UserRepository userRepository) {
+        this.userRepository = userRepository;
         this.clientRepository = clientRepository;
 
     }
@@ -92,6 +95,21 @@ public class ClientServiceImpl implements ClientService {
         return mapToResponse(entity);
     }
 
+    // Získanie údajov aktuálne prihláseného klienta podľa emailu z objektu Authentication.
+    @Override
+    public ClientResponse getMyClient(String email) {
+        var user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new NotFoundException("Používateľ neexistuje pre email=" + email)
+                );
+
+        if (user.getClient() == null) {
+            throw new NotFoundException("Prihlásený používateľ nemá priradeného klienta.");
+        }
+
+        return mapToResponse(user.getClient());
+    }
+
     // Aktualizácia existujúceho klienta podľa ID.
     @Override
     public ClientResponse updateClient(Long id, ClientUpdateRequest request) {
@@ -114,6 +132,15 @@ public class ClientServiceImpl implements ClientService {
                     "Email už používa iný klient: "
                             + request.getEmail()
             );
+        }
+
+        if (!entity.getEmail().equals(request.getEmail())) {
+
+            userRepository.findByClient_ClientId(id)
+                    .ifPresent(user -> {
+                        user.setEmail(request.getEmail());
+                        userRepository.save(user);
+                    });
         }
 
         // Prepísanie údajov klienta novými hodnotami z requestu.

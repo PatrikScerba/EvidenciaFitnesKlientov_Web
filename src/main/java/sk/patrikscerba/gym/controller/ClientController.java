@@ -9,6 +9,7 @@ import sk.patrikscerba.gym.dto.client.ClientAccountResponse;
 import sk.patrikscerba.gym.dto.client.ClientCreateRequest;
 import sk.patrikscerba.gym.dto.client.ClientResponse;
 import sk.patrikscerba.gym.dto.client.ClientUpdateRequest;
+import sk.patrikscerba.gym.entity.UserEntity;
 import sk.patrikscerba.gym.service.client.ClientAccountService;
 import sk.patrikscerba.gym.service.client.ClientService;
 
@@ -92,7 +93,7 @@ public class ClientController {
     @GetMapping("/me")
     public ResponseEntity<ClientResponse> getMyClient(Authentication authentication) {
         return ResponseEntity.ok(
-                clientService.getClientByEmail(authentication.getName())
+                clientService.getMyClient(authentication.getName())
         );
     }
 }
