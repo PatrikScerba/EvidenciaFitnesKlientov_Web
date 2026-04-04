@@ -47,3 +47,9 @@ export async function updateClient(id, clientData) {
     body: JSON.stringify(clientData),
   });
 }
+
+export async function deleteClient(id) {
+  return apiFetch(`/api/clients/${id}`, {
+    method: "DELETE",
+  });
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { getAllClients } from "../../api/clientApi";
+import { getAllClients, deleteClient } from "../../api/clientApi";
 
-export default function ClientList({ onEdit, refreshKey }) {
+export default function ClientList({ onEdit, onDeleteSuccess, refreshKey }) {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -21,6 +21,22 @@ export default function ClientList({ onEdit, refreshKey }) {
       setError(err.message || "Nepodarilo sa načítať klientov.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleDelete(id) {
+    const confirmed = window.confirm("Naozaj chceš vymazať klienta?");
+    if (!confirmed) return;
+
+    try {
+      await deleteClient(id);
+
+      setClients((prev) => prev.filter((client) => client.clientId !== id));
+      if (onDeleteSuccess) {
+        onDeleteSuccess();
+      }
+    } catch (err) {
+      setError(err.message || "Vymazanie klienta zlyhalo.");
     }
   }
 
@@ -59,6 +75,12 @@ export default function ClientList({ onEdit, refreshKey }) {
                 <td>{client.email}</td>
                 <td>
                   <button onClick={() => onEdit(client)}>Upraviť</button>
+                  <button
+                    style={{ marginLeft: "10px", color: "red" }}
+                    onClick={() => handleDelete(client.clientId)}
+                  >
+                    Vymazať
+                  </button>
                 </td>
               </tr>
             ))}

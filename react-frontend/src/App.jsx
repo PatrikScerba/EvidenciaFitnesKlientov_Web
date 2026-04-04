@@ -7,7 +7,7 @@ import ChangePassword from "./pages/auth/ChangePassword";
 import AdminPasswordReset from "./pages/admin/AdminPasswordReset";
 import ClientList from "./pages/clients/ClientList";
 import ClientSearch from "./pages/clients/ClientSearch";
-import { searchClients } from "./api/clientApi";
+import { searchClients, deleteClient } from "./api/clientApi";
 import ClientDetail from "./pages/clients/ClientDetail";
 import ClientEdit from "./pages/clients/ClientEdit";
 
@@ -124,6 +124,12 @@ export default function App() {
     setShowAdminPasswordReset(false);
   }
 
+  function handleClientDeleted() {
+    setEditingClient(null);
+    setShowClientList(true);
+    setClientListRefresh((prev) => prev + 1);
+  }
+
   async function handleClientSearch(filters) {
     if (filters === null) {
       setSearchResults([]);
@@ -141,6 +147,24 @@ export default function App() {
       setSearchResults([]);
     } finally {
       setLoadingSearch(false);
+    }
+  }
+
+  async function handleDeleteClient(id) {
+    const confirmed = window.confirm("Naozaj chceš vymazať klienta?");
+    if (!confirmed) return;
+
+    try {
+      await deleteClient(id);
+
+      setSearchResults((prev) =>
+        prev.filter((client) => client.clientId !== id)
+      );
+
+      setClientListRefresh((prev) => prev + 1);
+      setEditingClient(null);
+    } catch (err) {
+      console.error("Mazanie klienta zlyhalo:", err);
     }
   }
 
@@ -208,6 +232,7 @@ export default function App() {
             <div style={{ marginTop: "20px" }}>
               <ClientList
                 onEdit={handleEditClient}
+                onDeleteSuccess={handleClientDeleted}
                 refreshKey={clientListRefresh}
               />
             </div>
@@ -265,6 +290,14 @@ export default function App() {
                             <td>
                               <button onClick={() => handleEditClient(client)}>
                                 Upraviť údaje
+                              </button>
+                              <button
+                                style={{ marginLeft: "10px", color: "red" }}
+                                onClick={() =>
+                                  handleDeleteClient(client.clientId)
+                                }
+                              >
+                                Vymazať
                               </button>
                             </td>
                           </tr>
@@ -359,6 +392,14 @@ export default function App() {
                               <button onClick={() => handleEditClient(client)}>
                                 Upraviť údaje
                               </button>
+                              <button
+                                style={{ marginLeft: "10px", color: "red" }}
+                                onClick={() =>
+                                  handleDeleteClient(client.clientId)
+                                }
+                              >
+                                Vymazať
+                              </button>
                             </td>
                           </tr>
                         ))}
@@ -373,6 +414,7 @@ export default function App() {
             <div style={{ marginTop: "20px" }}>
               <ClientList
                 onEdit={handleEditClient}
+                onDeleteSuccess={handleClientDeleted}
                 refreshKey={clientListRefresh}
               />
             </div>
