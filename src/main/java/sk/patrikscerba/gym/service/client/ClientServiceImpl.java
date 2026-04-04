@@ -166,6 +166,8 @@ public class ClientServiceImpl implements ClientService {
             throw new NotFoundException(
                     "Klient neexistuje, id=" + id);
         }
+        userRepository.findByClient_ClientId(id)
+                .ifPresent(userRepository::delete);
 
         // Vymazanie klienta z databázy.
         clientRepository.deleteById(id);
