@@ -27,6 +27,7 @@ export default function ClientSearch({ onSearch, loading }) {
       lastName: "",
       email: "",
     };
+    setForm(emptyForm);
     onSearch(null);
   }
 
