@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { logout } from "./api/authApi";
+import { useEffect, useState } from "react";
+import { getCurrentUser, logout } from "./api/authApi";
 import Login from "./pages/auth/Login";
 import ClientRegister from "./pages/ClientRegister";
 import EmployeeRegister from "./pages/EmployeeRegister";
@@ -13,6 +13,7 @@ import ClientEdit from "./pages/clients/ClientEdit";
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [showClientRegister, setShowClientRegister] = useState(false);
   const [showEmployeeRegister, setShowEmployeeRegister] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -24,6 +25,29 @@ export default function App() {
   const [hasSearched, setHasSearched] = useState(false);
   const [editingClient, setEditingClient] = useState(null);
   const [clientListRefresh, setClientListRefresh] = useState(0);
+
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
+      } catch (err) {
+        setUser(null);
+      } finally {
+        setAuthLoading(false);
+      }
+    }
+
+    checkAuth();
+  }, []);
+
+  if (authLoading) {
+    return (
+      <div style={{ padding: "30px", fontFamily: "Arial" }}>
+        <h2>Načítavam prihlásenie...</h2>
+      </div>
+    );
+  }
 
   function handleShowEmployeeForm() {
     if (showEmployeeRegister) {
