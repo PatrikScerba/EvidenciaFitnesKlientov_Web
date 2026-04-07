@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createClient } from "../api/clientApi";
+import { createClient } from "../../api/clientApi";
 
 export default function ClientRegister() {
   const [form, setForm] = useState({
@@ -32,27 +32,27 @@ export default function ClientRegister() {
     setResult(null);
     setLoading(true);
 
-       try {
-         const response = await createClient(form);
-         setResult(response);
+    try {
+      const response = await createClient(form);
+      setResult(response);
 
-         setForm({
-           firstName: "",
-           lastName: "",
-           dateOfBirth: "",
-           phoneNumber: "",
-           address: "",
-           email: "",
-           securityQuestion: "",
-           securityAnswer: "",
-           confirmSecurityAnswer: "",
-         });
-       } catch (err) {
-         setError(err.message || "Nastala chyba.");
-       } finally {
-         setLoading(false);
-       }
-     }
+      setForm({
+        firstName: "",
+        lastName: "",
+        dateOfBirth: "",
+        phoneNumber: "",
+        address: "",
+        email: "",
+        securityQuestion: "",
+        securityAnswer: "",
+        confirmSecurityAnswer: "",
+      });
+    } catch (err) {
+      setError(err.message || "Nastala chyba.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div style={{ padding: "30px", maxWidth: "500px" }}>

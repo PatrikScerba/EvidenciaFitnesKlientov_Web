@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createEmployee } from "../api/adminApi";
+import { createEmployee } from "../../api/adminApi";
 
 export default function EmployeeRegister() {
   const [form, setForm] = useState({
@@ -28,8 +28,8 @@ export default function EmployeeRegister() {
     setLoading(true);
 
     try {
-        const response = await createEmployee(form);
-        setResult(response);
+      const response = await createEmployee(form);
+      setResult(response);
 
       setForm({
         email: "",
