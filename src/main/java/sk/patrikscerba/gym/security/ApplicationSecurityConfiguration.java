@@ -1,5 +1,6 @@
 package sk.patrikscerba.gym.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,6 +47,7 @@ public class ApplicationSecurityConfiguration {
 
                         // Verejný endpoint pre prihlásenie.
                         .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/logout").authenticated()
 
                         // Endpointy prístupné podľa role používateľa.
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
@@ -62,6 +64,16 @@ public class ApplicationSecurityConfiguration {
                         // Všetky ostatné endpointy vyžadujú prihlásenie.
                         .anyRequest().authenticated()
                 )
+
+                .logout(logout -> logout
+                        .logoutUrl("/api/auth/logout")
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        })
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                )
+
                 .authenticationProvider(authenticationProvider())
 
                 .httpBasic(httpBasic -> httpBasic.disable())
