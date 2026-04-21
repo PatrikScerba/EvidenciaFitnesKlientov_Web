@@ -12,5 +12,7 @@ public interface EntryService {
     // Vytvorí nový záznam o vstupe klienta.
     EntryResponse createEntry(EntryCreateRequest request);
 
+    // Zaznamená odchod klienta – nastaví čas odchodu pre jeho posledný aktívny vstup.
+    EntryResponse registerDeparture(Long clientId);
 }
 

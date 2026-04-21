@@ -59,6 +59,7 @@ public class ApplicationSecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/memberships/**").hasAnyRole("ADMIN", "EMPLOYEE")
 
                         .requestMatchers(HttpMethod.POST, "/api/entries/**").hasAnyRole("ADMIN", "EMPLOYEE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/entries/**").hasAnyRole("ADMIN", "EMPLOYEE")
 
                         .requestMatchers(HttpMethod.GET, "/api/clients/me").hasRole("CLIENT")
                         .requestMatchers(HttpMethod.GET, "/api/clients/**").hasAnyRole("ADMIN", "EMPLOYEE")
@@ -116,7 +117,7 @@ public class ApplicationSecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 

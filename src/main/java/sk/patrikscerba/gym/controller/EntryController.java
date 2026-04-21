@@ -10,7 +10,7 @@ import sk.patrikscerba.gym.service.entry.EntryService;
 
 /**
  * Controller pre evidenciu vstupov klientov.
- * Zabezpečuje vytvorenie nového záznamu o vstupe.
+ * Zabezpečuje vytváranie záznamov o vstupe a zaznamenanie odchodu klienta.
  */
 @RestController
 @RequestMapping("/api/entries")
@@ -28,6 +28,13 @@ public class EntryController {
     public ResponseEntity<EntryResponse> createEntry(@Valid @RequestBody EntryCreateRequest request) {
         EntryResponse response = entryService.createEntry(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    // Zaznamená odchod klienta na poslednom aktívnom schválenom vstupe.
+    @PatchMapping("/{clientId}/departure")
+    public ResponseEntity<EntryResponse> registerDeparture(@PathVariable Long clientId) {
+        EntryResponse response = entryService.registerDeparture(clientId);
+        return ResponseEntity.ok(response);
     }
 }
 

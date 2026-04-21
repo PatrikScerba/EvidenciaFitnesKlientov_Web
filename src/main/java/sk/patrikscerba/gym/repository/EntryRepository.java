@@ -6,6 +6,7 @@ import sk.patrikscerba.gym.entity.ClientEntity;
 import sk.patrikscerba.gym.enums.EntryStatus;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * Repository pre prácu so záznamami vstupov.
@@ -19,6 +20,12 @@ public interface EntryRepository extends JpaRepository<EntryEntity, Long> {
             LocalDateTime startOfDay,
             LocalDateTime endOfDay,
             EntryStatus status);
+
+    // Nájde posledný schválený vstup klienta bez zaznamenaného odchodu.
+    Optional<EntryEntity> findTopByClientAndStatusAndDepartureTimeIsNullOrderByArrivalTimeDesc(
+            ClientEntity client,
+            EntryStatus status
+    );
 }
 
 

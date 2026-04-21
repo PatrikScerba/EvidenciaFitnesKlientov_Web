@@ -50,7 +50,7 @@ public class EntryServiceImpl implements EntryService {
                 .orElseThrow(() -> new NotFoundException("Klient s daným ID neexistuje."));
 
         // Príprava aktuálneho dátumu a časového rozsahu dnešného dňa.
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now().withNano(0);
         LocalDate today = now.toLocalDate();
         LocalDateTime startOfDay = today.atStartOfDay();
         LocalDateTime endOfDay = today.atTime(23, 59, 59);
@@ -104,7 +104,30 @@ public class EntryServiceImpl implements EntryService {
         entry.setStatus(status);
         entry.setReason(reason);
         entry.setArrivalTime(now);
+        entry.setDepartureTime(null);
         entry.setNote(request.getNote());
+
+        EntryEntity savedEntry = entryRepository.save(entry);
+
+        return mapToResponse(savedEntry);
+    }
+
+    // Zaznamená odchod klienta, t.j. nastaví čas odchodu pre aktívny vstup.
+    @Override
+    @Transactional
+    public EntryResponse registerDeparture(Long clientId) {
+
+        ClientEntity client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new NotFoundException("Klient s daným ID neexistuje."));
+
+        EntryEntity entry = entryRepository
+                .findTopByClientAndStatusAndDepartureTimeIsNullOrderByArrivalTimeDesc(
+                        client,
+                        EntryStatus.APPROVED
+                )
+                .orElseThrow(() -> new NotFoundException("Klient nemá žiadny aktívny vstup na odchod."));
+
+        entry.setDepartureTime(LocalDateTime.now().withNano(0));
 
         EntryEntity savedEntry = entryRepository.save(entry);
 
@@ -122,6 +145,10 @@ public class EntryServiceImpl implements EntryService {
         response.setReason(entry.getReason());
         response.setArrivalTime(entry.getArrivalTime().toLocalTime().withNano(0));
         response.setDate(entry.getArrivalTime().toLocalDate());
+
+        if (entry.getDepartureTime() != null) {
+            response.setDepartureTime(entry.getDepartureTime().toLocalTime().withNano(0));
+        }
 
         response.setNote(entry.getNote());
 
