@@ -4,6 +4,7 @@ import ClientSearch from "../../pages/clients/ClientSearch";
 import ClientEdit from "../../pages/clients/ClientEdit";
 import ClientResultsTable from "./ClientResultsTable";
 import { searchClients, deleteClient } from "../../api/clientApi";
+import MembershipManagementSection from "../memberships/MembershipManagementSection";
 
 export default function ClientManagementSection({ activeView, views }) {
   const [searchResults, setSearchResults] = useState([]);
@@ -11,6 +12,7 @@ export default function ClientManagementSection({ activeView, views }) {
   const [hasSearched, setHasSearched] = useState(false);
   const [editingClient, setEditingClient] = useState(null);
   const [clientListRefresh, setClientListRefresh] = useState(0);
+  const [membershipClient, setMembershipClient] = useState(null);
 
   const isSearchView = activeView === views.CLIENT_SEARCH;
   const isListView = activeView === views.CLIENT_LIST;
@@ -18,10 +20,12 @@ export default function ClientManagementSection({ activeView, views }) {
 
   useEffect(() => {
     setEditingClient(null);
+    setMembershipClient(null);
   }, [activeView]);
 
   function handleEditClient(client) {
     setEditingClient(client);
+    setMembershipClient(null);
   }
 
   function closeEditForm() {
@@ -36,6 +40,7 @@ export default function ClientManagementSection({ activeView, views }) {
     setSearchResults([]);
     setHasSearched(false);
     closeEditForm();
+    closeMembershipForm();
   }
 
   async function handleClientSearch(filters) {
@@ -48,6 +53,7 @@ export default function ClientManagementSection({ activeView, views }) {
       setLoadingSearch(true);
       setHasSearched(true);
       closeEditForm();
+      closeMembershipForm();
 
       const data = await searchClients(filters);
       setSearchResults(data);
@@ -71,6 +77,7 @@ export default function ClientManagementSection({ activeView, views }) {
       );
 
       closeEditForm();
+      closeMembershipForm();
       refreshClientList();
     } catch (err) {
       console.error("Mazanie klienta zlyhalo:", err);
@@ -90,6 +97,15 @@ export default function ClientManagementSection({ activeView, views }) {
     refreshClientList();
   }
 
+  function handleManageMembership(client) {
+    setEditingClient(null);
+    setMembershipClient(client);
+  }
+
+  function closeMembershipForm() {
+    setMembershipClient(null);
+  }
+
   return (
     <>
       {isSearchView && (
@@ -105,6 +121,7 @@ export default function ClientManagementSection({ activeView, views }) {
                   clients={searchResults}
                   onEdit={handleEditClient}
                   onDelete={handleDeleteClient}
+                  onManageMembership={handleManageMembership}
                 />
               ))}
           </div>
@@ -115,6 +132,7 @@ export default function ClientManagementSection({ activeView, views }) {
         <div style={{ marginTop: "20px" }}>
           <ClientList
             onEdit={handleEditClient}
+            onManageMembership={handleManageMembership}
             onDeleteSuccess={() => {
               closeEditForm();
               refreshClientList();
@@ -130,6 +148,14 @@ export default function ClientManagementSection({ activeView, views }) {
             client={editingClient}
             onCancel={closeEditForm}
             onUpdated={handleClientUpdated}
+          />
+        </div>
+      )}
+      {membershipClient && (
+        <div style={{ marginTop: "20px" }}>
+          <MembershipManagementSection
+            client={membershipClient}
+            onClose={closeMembershipForm}
           />
         </div>
       )}

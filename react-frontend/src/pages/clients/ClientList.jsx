@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { getAllClients, deleteClient } from "../../api/clientApi";
 
-export default function ClientList({ onEdit, onDeleteSuccess, refreshKey }) {
+export default function ClientList({
+  onEdit,
+  onManageMembership,
+  onDeleteSuccess,
+  refreshKey,
+}) {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -75,11 +80,19 @@ export default function ClientList({ onEdit, onDeleteSuccess, refreshKey }) {
                 <td>{client.email}</td>
                 <td>
                   <button onClick={() => onEdit(client)}>Upraviť</button>
+
                   <button
                     style={{ marginLeft: "10px", color: "red" }}
                     onClick={() => handleDelete(client.clientId)}
                   >
                     Vymazať
+                  </button>
+
+                  <button
+                    style={{ marginLeft: "10px" }}
+                    onClick={() => onManageMembership(client)}
+                  >
+                    Permanentka
                   </button>
                 </td>
               </tr>

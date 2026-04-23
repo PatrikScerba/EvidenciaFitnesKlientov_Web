@@ -1,4 +1,9 @@
-export default function ClientResultsTable({ clients, onEdit, onDelete }) {
+export default function ClientResultsTable({
+  clients,
+  onEdit,
+  onDelete,
+  onManageMembership,
+}) {
   return (
     <table border="1" cellPadding="8">
       <thead>
@@ -32,6 +37,13 @@ export default function ClientResultsTable({ clients, onEdit, onDelete }) {
                 onClick={() => onDelete(client.clientId)}
               >
                 Vymazať
+              </button>
+
+              <button
+                style={{ marginLeft: "10px" }}
+                onClick={() => onManageMembership(client)}
+              >
+                Permanentka
               </button>
             </td>
           </tr>
