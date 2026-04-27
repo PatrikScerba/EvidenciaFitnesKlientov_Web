@@ -14,11 +14,13 @@ import sk.patrikscerba.gym.exception.ConflictException;
 import sk.patrikscerba.gym.repository.UserRepository;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 
 /**
  * Implementácia servisnej vrstvy pre vytvorenie účtu zamestnanca.
  * Trieda zabezpečuje kontrolu duplicity emailu, vygenerovanie dočasného hesla,
- * uloženie používateľa s rolou zamestnanca, uloženie bezpečnostnej otázky, odpovede
+ * uloženie používateľa s rolou zamestnanca, čas vytvorenia účtu,
+ * uloženie bezpečnostnej otázky, odpovede
  * a informáciu o používaní dočasného hesla s možnosťou jeho zmeny.
  */
 @Service
@@ -47,12 +49,15 @@ public class EmployeeAccountServiceImpl implements EmployeeAccountService {
             throw new BusinessException("Bezpečnostné odpovede sa nezhodujú.");
         }
 
+        LocalDateTime now = LocalDateTime.now();
+
         // Vygenerovanie dočasného hesla pre nový účet.
         String temporaryPassword = generateTemporaryPassword();
 
         // Nastavenie údajov používateľa.
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail(request.getEmail());
+        userEntity.setCreatedAt(now);
         userEntity.setPassword(passwordEncoder.encode(temporaryPassword));
         userEntity.setUsingTemporaryPassword(true);
         userEntity.setPasswordChangeRequired(true);
@@ -72,6 +77,7 @@ public class EmployeeAccountServiceImpl implements EmployeeAccountService {
         EmployeeAccountResponse response = new EmployeeAccountResponse();
         response.setUserId(savedUser.getUserId());
         response.setEmail(savedUser.getEmail());
+        response.setCreatedAt(savedUser.getCreatedAt());
         response.setRole(savedUser.getRole().name());
         response.setTemporaryPassword(temporaryPassword);
         response.setMessage("Zamestnanec bol úspešne vytvorený.");

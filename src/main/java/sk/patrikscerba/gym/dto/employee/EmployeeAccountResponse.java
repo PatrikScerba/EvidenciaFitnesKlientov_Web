@@ -1,5 +1,7 @@
 package sk.patrikscerba.gym.dto.employee;
 
+import java.time.LocalDateTime;
+
 /**
  * DTO pre odpoveď po vytvorení účtu zamestnanca.
  */
@@ -10,6 +12,7 @@ public class EmployeeAccountResponse {
     private String role;
     private String temporaryPassword;
     private String message;
+    private LocalDateTime createdAt;
 
     public Long getUserId() {
         return userId;
@@ -49,6 +52,14 @@ public class EmployeeAccountResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
 

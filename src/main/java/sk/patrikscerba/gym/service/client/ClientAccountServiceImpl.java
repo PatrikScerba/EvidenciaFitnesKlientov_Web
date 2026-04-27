@@ -15,11 +15,13 @@ import sk.patrikscerba.gym.repository.UserRepository;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 
 /**
  * Implementácia servisnej vrstvy pre registráciu klienta spolu s vytvorením používateľského účtu.
  * Trieda zabezpečuje validáciu veku klienta, kontrolu duplicity emailu, vytvorenie klienta,
+ * uloženie dátumu registrácie klienta,
  * založenie účtu s dočasným heslom, uloženie bezpečnostnej otázky, odpovede
  * a informáciu o používaní dočasného hesla s možnosťou jeho zmeny.
  */
@@ -60,6 +62,8 @@ public class ClientAccountServiceImpl implements ClientAccountService {
             throw new BusinessException("Bezpečnostné odpovede sa nezhodujú.");
         }
 
+        LocalDateTime now = LocalDateTime.now();
+
         // Vytvorenie a naplnenie entity klienta.
         ClientEntity clientEntity = new ClientEntity();
         clientEntity.setFirstName(request.getFirstName());
@@ -68,6 +72,7 @@ public class ClientAccountServiceImpl implements ClientAccountService {
         clientEntity.setPhoneNumber(request.getPhoneNumber());
         clientEntity.setAddress(request.getAddress());
         clientEntity.setEmail(request.getEmail());
+        clientEntity.setRegisteredAt(now);
 
         ClientEntity savedClient = clientRepository.save(clientEntity);
 
@@ -77,6 +82,7 @@ public class ClientAccountServiceImpl implements ClientAccountService {
         // Vytvorenie používateľského účtu naviazaného na uloženého klienta.
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail(request.getEmail());
+        userEntity.setCreatedAt(now);
         userEntity.setPassword(passwordEncoder.encode(temporaryPassword));
         userEntity.setUsingTemporaryPassword(true);
         userEntity.setPasswordChangeRequired(true);
@@ -95,6 +101,8 @@ public class ClientAccountServiceImpl implements ClientAccountService {
         response.setFirstName(savedClient.getFirstName());
         response.setLastName(savedClient.getLastName());
         response.setEmail(savedClient.getEmail());
+        response.setRegisteredAt(now);
+        response.setAccountCreatedAt(now);
         response.setTemporaryPassword(temporaryPassword);
         response.setRole(savedUser.getRole().name());
         response.setMessage("Klient aj prihlasovací účet boli úspešne vytvorené.");

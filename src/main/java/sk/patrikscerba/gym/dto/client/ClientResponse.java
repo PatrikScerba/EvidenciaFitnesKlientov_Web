@@ -1,10 +1,11 @@
 package sk.patrikscerba.gym.dto.client;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
-  DTO objekt používaný na odosielanie údajov o klientovi ako odpoveď.
-  Obsahuje údaje, ktoré sa vracajú napríklad z controllera na frontend.
+ * DTO objekt používaný na odosielanie údajov o klientovi ako odpoveď.
+ * Obsahuje údaje, ktoré sa vracajú napríklad z controllera na frontend.
  */
 public class ClientResponse {
 
@@ -15,6 +16,7 @@ public class ClientResponse {
     private String phoneNumber;
     private String address;
     private String email;
+    private LocalDateTime registeredAt;
 
     public Long getClientId() {
         return clientId;
@@ -70,5 +72,13 @@ public class ClientResponse {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public LocalDateTime getRegisteredAt() {
+        return registeredAt;
+    }
+
+    public void setRegisteredAt(LocalDateTime registeredAt) {
+        this.registeredAt = registeredAt;
     }
 }

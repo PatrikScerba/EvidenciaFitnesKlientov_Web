@@ -6,6 +6,8 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import sk.patrikscerba.gym.enums.SecurityQuestion;
 
+import java.time.LocalDateTime;
+
 /**
  * Entita reprezentujúca používateľa systému.
  * Uchováva prihlasovacie údaje, rolu, bezpečnostnú otázku,
@@ -31,7 +33,7 @@ public class UserEntity {
 
     @OneToOne
     @JoinColumn(name = "client_id")
-    private  ClientEntity client;
+    private ClientEntity client;
 
     @Column(nullable = false)
     private boolean usingTemporaryPassword = true;
@@ -45,6 +47,9 @@ public class UserEntity {
 
     @Column(name = "password_change_required", nullable = false)
     private boolean passwordChangeRequired;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private java.time.LocalDateTime createdAt;
 
     public SecurityQuestion getSecurityQuestion() {
         return securityQuestion;
@@ -116,5 +121,13 @@ public class UserEntity {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

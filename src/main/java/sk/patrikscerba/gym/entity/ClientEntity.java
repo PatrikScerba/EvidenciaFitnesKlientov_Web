@@ -1,7 +1,9 @@
 package sk.patrikscerba.gym.entity;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "clients")
@@ -28,6 +30,9 @@ public class ClientEntity {
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;
+
+    @Column(name = "registered_at", nullable = false, updatable = false)
+    private LocalDateTime registeredAt;
 
     public Long getClientId() {
         return clientId;
@@ -83,5 +88,13 @@ public class ClientEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public LocalDateTime getRegisteredAt() {
+        return registeredAt;
+    }
+
+    public void setRegisteredAt(LocalDateTime registeredAt) {
+        this.registeredAt = registeredAt;
     }
 }

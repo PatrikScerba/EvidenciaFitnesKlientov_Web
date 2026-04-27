@@ -1,5 +1,7 @@
 package sk.patrikscerba.gym.dto.client;
 
+import java.time.LocalDateTime;
+
 /**
  * DTO odpoveď po úspešnom vytvorení klienta a jeho používateľského účtu.
  * Obsahuje základné údaje o klientovi, ID klienta a používateľa,
@@ -15,6 +17,8 @@ public class ClientAccountResponse {
     private String temporaryPassword;
     private String role;
     private String message;
+    private LocalDateTime registeredAt;
+    private LocalDateTime accountCreatedAt;
 
     public Long getClientId() {
         return clientId;
@@ -78,5 +82,21 @@ public class ClientAccountResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public LocalDateTime getRegisteredAt() {
+        return registeredAt;
+    }
+
+    public void setRegisteredAt(LocalDateTime registeredAt) {
+        this.registeredAt = registeredAt;
+    }
+
+    public LocalDateTime getAccountCreatedAt() {
+        return accountCreatedAt;
+    }
+
+    public void setAccountCreatedAt(LocalDateTime accountCreatedAt) {
+        this.accountCreatedAt = accountCreatedAt;
     }
 }
