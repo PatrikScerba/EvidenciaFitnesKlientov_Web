@@ -5,6 +5,7 @@ import ClientEdit from "../../pages/clients/ClientEdit";
 import ClientResultsTable from "./ClientResultsTable";
 import { searchClients, deleteClient } from "../../api/clientApi";
 import MembershipManagementSection from "../memberships/MembershipManagementSection";
+import EntryManagementSection from "../entries/EntryManagementSection";
 
 export default function ClientManagementSection({ activeView, views }) {
   const [searchResults, setSearchResults] = useState([]);
@@ -18,14 +19,18 @@ export default function ClientManagementSection({ activeView, views }) {
   const isListView = activeView === views.CLIENT_LIST;
   const showEditForm = editingClient && (isSearchView || isListView);
 
+  const [entryClient, setEntryClient] = useState(null);
+
   useEffect(() => {
     setEditingClient(null);
     setMembershipClient(null);
+    setEntryClient(null);
   }, [activeView]);
 
   function handleEditClient(client) {
     setEditingClient(client);
     setMembershipClient(null);
+    setEntryClient(null);
   }
 
   function closeEditForm() {
@@ -39,6 +44,7 @@ export default function ClientManagementSection({ activeView, views }) {
   function resetSearchState() {
     setSearchResults([]);
     setHasSearched(false);
+    setEntryClient(null);
     closeEditForm();
     closeMembershipForm();
   }
@@ -54,6 +60,7 @@ export default function ClientManagementSection({ activeView, views }) {
       setHasSearched(true);
       closeEditForm();
       closeMembershipForm();
+      closeEntryForm();
 
       const data = await searchClients(filters);
       setSearchResults(data);
@@ -75,7 +82,7 @@ export default function ClientManagementSection({ activeView, views }) {
       setSearchResults((prev) =>
         prev.filter((client) => client.clientId !== id)
       );
-
+      setEntryClient(null);
       closeEditForm();
       closeMembershipForm();
       refreshClientList();
@@ -106,6 +113,16 @@ export default function ClientManagementSection({ activeView, views }) {
     setMembershipClient(null);
   }
 
+  function handleEntryClient(client) {
+    setEntryClient(client);
+    setEditingClient(null);
+    setMembershipClient(null);
+  }
+
+  function closeEntryForm() {
+    setEntryClient(null);
+  }
+
   return (
     <>
       {isSearchView && (
@@ -122,6 +139,7 @@ export default function ClientManagementSection({ activeView, views }) {
                   onEdit={handleEditClient}
                   onDelete={handleDeleteClient}
                   onManageMembership={handleManageMembership}
+                  onManageEntry={handleEntryClient}
                 />
               ))}
           </div>
@@ -133,6 +151,7 @@ export default function ClientManagementSection({ activeView, views }) {
           <ClientList
             onEdit={handleEditClient}
             onManageMembership={handleManageMembership}
+            onManageEntry={handleEntryClient}
             onDeleteSuccess={() => {
               closeEditForm();
               refreshClientList();
@@ -156,6 +175,14 @@ export default function ClientManagementSection({ activeView, views }) {
           <MembershipManagementSection
             client={membershipClient}
             onClose={closeMembershipForm}
+          />
+        </div>
+      )}
+      {entryClient && (
+        <div style={{ marginTop: "20px" }}>
+          <EntryManagementSection
+            client={entryClient}
+            onClose={closeEntryForm}
           />
         </div>
       )}

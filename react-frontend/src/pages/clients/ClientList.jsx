@@ -6,6 +6,7 @@ export default function ClientList({
   onManageMembership,
   onDeleteSuccess,
   refreshKey,
+  onManageEntry,
 }) {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -93,6 +94,13 @@ export default function ClientList({
                     onClick={() => onManageMembership(client)}
                   >
                     Permanentka
+                  </button>
+
+                  <button
+                    style={{ marginLeft: "10px" }}
+                    onClick={() => onManageEntry(client)}
+                  >
+                    Vstup
                   </button>
                 </td>
               </tr>

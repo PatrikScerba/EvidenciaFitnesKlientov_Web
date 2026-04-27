@@ -3,6 +3,7 @@ export default function ClientResultsTable({
   onEdit,
   onDelete,
   onManageMembership,
+  onManageEntry,
 }) {
   return (
     <table border="1" cellPadding="8">
@@ -44,6 +45,13 @@ export default function ClientResultsTable({
                 onClick={() => onManageMembership(client)}
               >
                 Permanentka
+              </button>
+
+              <button
+                style={{ marginLeft: "10px" }}
+                onClick={() => onManageEntry(client)}
+              >
+                Vstup
               </button>
             </td>
           </tr>
