@@ -26,6 +26,12 @@ public interface EntryRepository extends JpaRepository<EntryEntity, Long> {
             ClientEntity client,
             EntryStatus status
     );
+
+    // Overí, či klient má aktívny vstup (schválený a bez zaznamenaného odchodu).
+    boolean existsByClientAndStatusAndDepartureTimeIsNull(
+            ClientEntity client,
+            EntryStatus status
+    );
 }
 
 

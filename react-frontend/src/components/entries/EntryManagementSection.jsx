@@ -7,6 +7,7 @@ export default function EntryManagementSection({ client, onClose }) {
   const [error, setError] = useState("");
   const [loadingEntry, setLoadingEntry] = useState(false);
   const [loadingDeparture, setLoadingDeparture] = useState(false);
+  const [activeEntry, setActiveEntry] = useState(null);
 
   function formatReason(reason) {
     switch (reason) {
@@ -20,6 +21,8 @@ export default function EntryManagementSection({ client, onClose }) {
         return "Klient už dnes mal vstup";
       case "AGE_RESTRICTION":
         return "Klient nespĺňa vekové obmedzenie";
+      case "ACTIVE_ENTRY_ALREADY_EXISTS":
+        return "Aktívny vstup – najprv zaevidujte odchod.";
       default:
         return reason;
     }
@@ -44,6 +47,11 @@ export default function EntryManagementSection({ client, onClose }) {
       });
 
       setEntryResult(response);
+
+      if (response.status === "APPROVED" && !response.departureTime) {
+        setActiveEntry(response);
+      }
+
       setNote("");
     } catch (err) {
       setError(err.message || "Nepodarilo sa zaevidovať vstup.");
@@ -67,6 +75,8 @@ export default function EntryManagementSection({ client, onClose }) {
     try {
       const response = await registerDeparture(client.clientId);
       setEntryResult(response);
+      setActiveEntry(null);
+      setNote("");
     } catch (err) {
       setError(err.message || "Nepodarilo sa zaznamenať odchod.");
     } finally {
@@ -107,17 +117,15 @@ export default function EntryManagementSection({ client, onClose }) {
       </div>
 
       <div style={{ marginTop: "15px" }}>
-        <button onClick={handleCreateEntry} disabled={loadingEntry}>
-          {loadingEntry ? "Ukladám vstup..." : "Zaevidovať vstup"}
-        </button>
+        {!activeEntry && (
+          <button onClick={handleCreateEntry} disabled={loadingEntry}>
+            {loadingEntry ? "Ukladám vstup..." : "Zaevidovať vstup"}
+          </button>
+        )}
 
-        {entryResult?.status === "APPROVED" && !entryResult.departureTime && (
-          <button
-            onClick={handleRegisterDeparture}
-            disabled={loadingDeparture}
-            style={{ marginLeft: "10px" }}
-          >
-            {loadingDeparture ? "Ukladám odchod..." : "Zaznamenať odchod"}
+        {activeEntry && (
+          <button onClick={handleRegisterDeparture} disabled={loadingDeparture}>
+            {loadingDeparture ? "Evidujem odchod..." : "Zaevidovať odchod"}
           </button>
         )}
 

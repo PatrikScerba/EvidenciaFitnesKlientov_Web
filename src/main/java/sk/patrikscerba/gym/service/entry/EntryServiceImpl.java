@@ -82,6 +82,17 @@ public class EntryServiceImpl implements EntryService {
             }
         }
 
+        // Kontrola, či klient má aktuálne otvorený/schválený vstup bez odchodu.
+        boolean hasOpenEntry = entryRepository.existsByClientAndStatusAndDepartureTimeIsNull(
+                client,
+                EntryStatus.APPROVED
+        );
+
+        if (hasOpenEntry) {
+            status = EntryStatus.DENIED;
+            reason = Reason.ACTIVE_ENTRY_ALREADY_EXISTS;
+        }
+
         // Kontrola, či už klient nemal dnes schválený vstup.
         if (status == EntryStatus.APPROVED) {
             boolean alreadyHasApprovedEntryToday =
