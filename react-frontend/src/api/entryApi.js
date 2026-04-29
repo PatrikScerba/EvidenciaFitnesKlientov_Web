@@ -13,3 +13,6 @@ export async function registerDeparture(clientId) {
   });
 }
 
+export async function getActiveEntries() {
+  return apiFetch("/api/entries/active");
+}
