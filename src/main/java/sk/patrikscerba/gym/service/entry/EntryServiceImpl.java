@@ -18,6 +18,7 @@ import sk.patrikscerba.gym.service.membership.MembershipService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.List;
 
 /**
  * Implementácia service logiky pre evidenciu vstupov klientov.
@@ -121,6 +122,17 @@ public class EntryServiceImpl implements EntryService {
         EntryEntity savedEntry = entryRepository.save(entry);
 
         return mapToResponse(savedEntry);
+    }
+
+    // Vráti všetky schválené vstupy, ktoré ešte nemajú zaznamenaný odchod.
+    @Override
+    @Transactional(readOnly = true)
+    public List<EntryResponse> getActiveEntries() {
+        return entryRepository
+                .findByStatusAndDepartureTimeIsNullOrderByArrivalTimeDesc(EntryStatus.APPROVED)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     // Zaznamená odchod klienta, t.j. nastaví čas odchodu pre aktívny vstup.

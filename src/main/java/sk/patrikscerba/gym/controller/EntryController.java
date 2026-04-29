@@ -8,6 +8,8 @@ import sk.patrikscerba.gym.dto.entry.EntryCreateRequest;
 import sk.patrikscerba.gym.dto.entry.EntryResponse;
 import sk.patrikscerba.gym.service.entry.EntryService;
 
+import java.util.List;
+
 /**
  * Controller pre evidenciu vstupov klientov.
  * Zabezpečuje vytváranie záznamov o vstupe a zaznamenanie odchodu klienta.
@@ -35,6 +37,13 @@ public class EntryController {
     public ResponseEntity<EntryResponse> registerDeparture(@PathVariable Long clientId) {
         EntryResponse response = entryService.registerDeparture(clientId);
         return ResponseEntity.ok(response);
+    }
+
+    // Získá zoznam všetkých aktívnych vstupov (schválených a bez zaznamenaného odchodu).
+    @GetMapping("/active")
+    public ResponseEntity<List<EntryResponse>> getActiveEntries() {
+        List<EntryResponse> activeEntries = entryService.getActiveEntries();
+        return ResponseEntity.ok(activeEntries);
     }
 }
 

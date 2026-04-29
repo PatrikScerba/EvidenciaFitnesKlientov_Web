@@ -6,6 +6,7 @@ import sk.patrikscerba.gym.entity.ClientEntity;
 import sk.patrikscerba.gym.enums.EntryStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -30,6 +31,11 @@ public interface EntryRepository extends JpaRepository<EntryEntity, Long> {
     // Overí, či klient má aktívny vstup (schválený a bez zaznamenaného odchodu).
     boolean existsByClientAndStatusAndDepartureTimeIsNull(
             ClientEntity client,
+            EntryStatus status
+    );
+
+    // Nájde všetky aktuálne aktívne vstupy klientov v fitnescentre.
+    List<EntryEntity> findByStatusAndDepartureTimeIsNullOrderByArrivalTimeDesc(
             EntryStatus status
     );
 }

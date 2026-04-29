@@ -58,6 +58,8 @@ public class ApplicationSecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/memberships/client/**").hasAnyRole("ADMIN", "EMPLOYEE")
                         .requestMatchers(HttpMethod.POST, "/api/memberships/**").hasAnyRole("ADMIN", "EMPLOYEE")
 
+                        .requestMatchers(HttpMethod.GET, "/api/entries/active").hasAnyRole("ADMIN", "EMPLOYEE")
+
                         .requestMatchers(HttpMethod.POST, "/api/entries/**").hasAnyRole("ADMIN", "EMPLOYEE")
                         .requestMatchers(HttpMethod.PATCH, "/api/entries/**").hasAnyRole("ADMIN", "EMPLOYEE")
 
