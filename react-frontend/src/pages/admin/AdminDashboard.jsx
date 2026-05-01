@@ -4,6 +4,7 @@ import EmployeeRegister from "../employees/EmployeeRegister";
 import AdminPasswordReset from "./AdminPasswordReset";
 import { ADMIN_VIEWS } from "../../constants/dashboardViews";
 import ClientManagementSection from "../../components/clients/ClientManagementSection";
+import ActiveEntriesDashboard from "../../components/entries/ActiveEntriesDashboard";
 
 export default function AdminDashboard({ user }) {
   const [activeView, setActiveView] = useState(null);
@@ -53,10 +54,19 @@ export default function AdminDashboard({ user }) {
           : "Zobraziť klientov"}
       </button>
 
-      <button onClick={() => toggleView(ADMIN_VIEWS.CLIENT_SEARCH)}>
+      <button
+        style={{ marginRight: "10px" }}
+        onClick={() => toggleView(ADMIN_VIEWS.CLIENT_SEARCH)}
+      >
         {activeView === ADMIN_VIEWS.CLIENT_SEARCH
           ? "Zavrieť vyhľadávanie klientov"
           : "Vyhľadať klienta"}
+      </button>
+
+      <button onClick={() => toggleView(ADMIN_VIEWS.ACTIVE_ENTRIES)}>
+        {activeView === ADMIN_VIEWS.ACTIVE_ENTRIES
+          ? "Zavrieť aktuálne vstupy"
+          : "Aktuálne v fitnescentre"}
       </button>
 
       <ClientManagementSection activeView={activeView} views={ADMIN_VIEWS} />
@@ -76,6 +86,12 @@ export default function AdminDashboard({ user }) {
       {activeView === ADMIN_VIEWS.PASSWORD_RESET && (
         <div style={{ marginTop: "20px" }}>
           <AdminPasswordReset />
+        </div>
+      )}
+
+      {activeView === ADMIN_VIEWS.ACTIVE_ENTRIES && (
+        <div style={{ marginTop: "20px" }}>
+          <ActiveEntriesDashboard />
         </div>
       )}
     </div>

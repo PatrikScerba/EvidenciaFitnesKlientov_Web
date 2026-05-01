@@ -2,6 +2,7 @@ import { useState } from "react";
 import ClientRegister from "../clients/ClientRegister";
 import { EMPLOYEE_VIEWS } from "../../constants/dashboardViews";
 import ClientManagementSection from "../../components/clients/ClientManagementSection";
+import ActiveEntriesDashboard from "../../components/entries/ActiveEntriesDashboard";
 
 export default function EmployeeDashboard({ user }) {
   const [activeView, setActiveView] = useState(null);
@@ -39,12 +40,22 @@ export default function EmployeeDashboard({ user }) {
           : "Vyhľadať klienta"}
       </button>
 
+      <button onClick={() => toggleView(EMPLOYEE_VIEWS.ACTIVE_ENTRIES)}>
+        {activeView === EMPLOYEE_VIEWS.ACTIVE_ENTRIES
+          ? "Zavrieť aktuálne vstupy"
+          : "Aktuálne v fitnescentre"}
+      </button>
+
       <ClientManagementSection activeView={activeView} views={EMPLOYEE_VIEWS} />
 
       {activeView === EMPLOYEE_VIEWS.CLIENT_REGISTER && (
         <div style={{ marginTop: "20px" }}>
           <ClientRegister />
         </div>
+      )}
+
+      {activeView === EMPLOYEE_VIEWS.ACTIVE_ENTRIES && (
+        <ActiveEntriesDashboard />
       )}
     </div>
   );
