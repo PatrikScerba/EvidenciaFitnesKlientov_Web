@@ -5,6 +5,10 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Trieda reprezentujúca klienta a databázovú tabuľku clients.
+ * Slúži na ukladanie údajov o klientovi v databáze.
+ */
 @Entity
 @Table(name = "clients")
 public class ClientEntity {
@@ -33,6 +37,9 @@ public class ClientEntity {
 
     @Column(name = "registered_at", nullable = false, updatable = false)
     private LocalDateTime registeredAt;
+
+    @Column(name = "qr_token", unique = true, nullable = false)
+    private String qrToken;
 
     public Long getClientId() {
         return clientId;
@@ -96,5 +103,13 @@ public class ClientEntity {
 
     public void setRegisteredAt(LocalDateTime registeredAt) {
         this.registeredAt = registeredAt;
+    }
+
+    public String getQrToken() {
+        return qrToken;
+    }
+
+    public void setQrToken(String qrToken) {
+        this.qrToken = qrToken;
     }
 }
