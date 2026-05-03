@@ -12,6 +12,7 @@ import sk.patrikscerba.gym.exception.BusinessException;
 import sk.patrikscerba.gym.exception.ConflictException;
 import sk.patrikscerba.gym.repository.ClientRepository;
 import sk.patrikscerba.gym.repository.UserRepository;
+import sk.patrikscerba.gym.service.qr.QrService;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
@@ -24,6 +25,8 @@ import java.time.Period;
  * uloženie dátumu registrácie klienta,
  * založenie účtu s dočasným heslom, uloženie bezpečnostnej otázky, odpovede
  * a informáciu o používaní dočasného hesla s možnosťou jeho zmeny.
+ * Súčasťou registrácie je aj automatické vygenerovanie QR tokenu,
+ * ktorý bude slúžiť ako unikátny identifikátor klienta pre budúce QR funkcie.
  */
 @Service
 public class ClientAccountServiceImpl implements ClientAccountService {
@@ -31,13 +34,16 @@ public class ClientAccountServiceImpl implements ClientAccountService {
     private final ClientRepository clientRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final QrService qrService;
 
     public ClientAccountServiceImpl(ClientRepository clientRepository,
                                     UserRepository userRepository,
-                                    PasswordEncoder passwordEncoder) {
+                                    PasswordEncoder passwordEncoder,
+                                    QrService qrService) {
         this.clientRepository = clientRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.qrService = qrService;
     }
 
     // Zaregistruje klienta, vytvorí mu používateľský účet a vráti odpoveď s dočasným heslom.
@@ -73,7 +79,7 @@ public class ClientAccountServiceImpl implements ClientAccountService {
         clientEntity.setAddress(request.getAddress());
         clientEntity.setEmail(request.getEmail());
         clientEntity.setRegisteredAt(now);
-
+        clientEntity.setQrToken(qrService.generateQrToken());
         ClientEntity savedClient = clientRepository.save(clientEntity);
 
         // Vygenerovanie dočasného hesla pre nový účet.
