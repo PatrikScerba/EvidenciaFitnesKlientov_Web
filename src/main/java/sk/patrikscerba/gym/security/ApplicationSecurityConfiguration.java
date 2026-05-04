@@ -69,6 +69,8 @@ public class ApplicationSecurityConfiguration {
                         .requestMatchers(HttpMethod.PUT, "/api/clients/**").hasAnyRole("ADMIN", "EMPLOYEE")
                         .requestMatchers(HttpMethod.DELETE, "/api/clients/**").hasRole("ADMIN")
 
+                        .requestMatchers(HttpMethod.GET, "/api/qr/client/**").hasAnyRole("ADMIN", "EMPLOYEE")
+                        .requestMatchers(HttpMethod.GET, "/api/qr/me").hasRole("CLIENT")
 
                         // Všetky ostatné endpointy vyžadujú prihlásenie.
                         .anyRequest().authenticated()
