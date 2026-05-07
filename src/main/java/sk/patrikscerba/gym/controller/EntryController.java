@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sk.patrikscerba.gym.dto.entry.EntryCreateRequest;
+import sk.patrikscerba.gym.dto.entry.EntryQrRequest;
 import sk.patrikscerba.gym.dto.entry.EntryResponse;
 import sk.patrikscerba.gym.service.entry.EntryService;
 
@@ -44,6 +45,18 @@ public class EntryController {
     public ResponseEntity<List<EntryResponse>> getActiveEntries() {
         List<EntryResponse> activeEntries = entryService.getActiveEntries();
         return ResponseEntity.ok(activeEntries);
+    }
+
+    // Vytvorí vstup klienta na základe QR tokenu.
+    @PostMapping("/qr")
+    public ResponseEntity<EntryResponse> createEntryByQr(@RequestBody EntryQrRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(entryService.createEntryByQr(request));
+    }
+
+    // Zaznamená odchod klienta na základe QR tokenu.
+    @PatchMapping("/qr/departure")
+    public ResponseEntity<EntryResponse> registerDepartureByQr(@RequestBody EntryQrRequest request) {
+        return ResponseEntity.ok(entryService.registerDepartureByQr(request.getQrToken()));
     }
 }
 
