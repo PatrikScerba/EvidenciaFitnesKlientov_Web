@@ -1,6 +1,7 @@
 package sk.patrikscerba.gym.entity;
 
 import jakarta.persistence.*;
+import sk.patrikscerba.gym.enums.EntryMethod;
 import sk.patrikscerba.gym.enums.EntryStatus;
 import sk.patrikscerba.gym.enums.Reason;
 
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 /**
  * Entita reprezentujúca záznam o vstupe klienta.
  * Obsahuje čas príchodu, odchodu, stav vstupu,
- * dôvod rozhodnutia a prípadnú poznámku.
+ * dôvod rozhodnutia, poznámku a spôsob, akým bol vstup alebo odchod vykonaný.
  */
 @Entity
 @Table(name = "entries")
@@ -39,6 +40,14 @@ public class EntryEntity {
 
     @Column(name = "note", length = 255)
     private String note;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "arrival_method")
+    private EntryMethod arrivalMethod;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "departure_method")
+    private EntryMethod departureMethod;
 
     public Long getId() {
         return id;
@@ -94,5 +103,21 @@ public class EntryEntity {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public EntryMethod getArrivalMethod() {
+        return arrivalMethod;
+    }
+
+    public void setArrivalMethod(EntryMethod arrivalMethod) {
+        this.arrivalMethod = arrivalMethod;
+    }
+
+    public EntryMethod getDepartureMethod() {
+        return departureMethod;
+    }
+
+    public void setDepartureMethod(EntryMethod departureMethod) {
+        this.departureMethod = departureMethod;
     }
 }
