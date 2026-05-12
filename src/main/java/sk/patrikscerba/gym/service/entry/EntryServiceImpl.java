@@ -8,6 +8,7 @@ import sk.patrikscerba.gym.dto.entry.EntryResponse;
 import sk.patrikscerba.gym.dto.membership.MembershipResponse;
 import sk.patrikscerba.gym.entity.ClientEntity;
 import sk.patrikscerba.gym.entity.EntryEntity;
+import sk.patrikscerba.gym.enums.EntryMethod;
 import sk.patrikscerba.gym.enums.EntryStatus;
 import sk.patrikscerba.gym.enums.MembershipStatus;
 import sk.patrikscerba.gym.enums.Reason;
@@ -46,7 +47,14 @@ public class EntryServiceImpl implements EntryService {
     @Override
     @Transactional
     public EntryResponse createEntry(EntryCreateRequest request) {
+        return createEntry(request, EntryMethod.MANUAL);
+    }
 
+    // Vytvorí nový záznam o vstupe klienta s konkrétnym spôsobom evidencie.
+    // Používa sa ako spoločná vstupná logika pre všetky spôsoby evidencie vstupu.
+    @Override
+    @Transactional
+    public EntryResponse createEntry(EntryCreateRequest request, EntryMethod arrivalMethod) {
         // Načítanie klienta podľa ID zo vstupného requestu.
         ClientEntity client = clientRepository.findById(request.getClientId())
                 .orElseThrow(() -> new NotFoundException("Klient s daným ID neexistuje."));
@@ -119,6 +127,7 @@ public class EntryServiceImpl implements EntryService {
         entry.setArrivalTime(now);
         entry.setDepartureTime(null);
         entry.setNote(request.getNote());
+        entry.setArrivalMethod(arrivalMethod);
 
         EntryEntity savedEntry = entryRepository.save(entry);
 
@@ -140,6 +149,14 @@ public class EntryServiceImpl implements EntryService {
     @Override
     @Transactional
     public EntryResponse registerDeparture(Long clientId) {
+        return registerDeparture(clientId, EntryMethod.MANUAL);
+    }
+
+    // Zaznamená odchod klienta s konkrétnym spôsobom evidencie odchodu.
+    // Používa sa ako spoločná odchodová logika pre všetky spôsoby evidencie odchodu.
+    @Override
+    @Transactional
+    public EntryResponse registerDeparture(Long clientId, EntryMethod departureMethod) {
 
         ClientEntity client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new NotFoundException("Klient s daným ID neexistuje."));
@@ -152,13 +169,15 @@ public class EntryServiceImpl implements EntryService {
                 .orElseThrow(() -> new NotFoundException("Klient nemá žiadny aktívny vstup na odchod."));
 
         entry.setDepartureTime(LocalDateTime.now().withNano(0));
+        entry.setDepartureMethod(departureMethod);
 
         EntryEntity savedEntry = entryRepository.save(entry);
 
         return mapToResponse(savedEntry);
     }
 
-    // Vytvorí vstup klienta na základe QR tokenu. Logika je znovu použitá z existujúcej metódy createEntry.
+    // Vytvorí vstup klienta na základe QR tokenu.
+    // Používa existujúcu vstupnú logiku so spôsobom evidencie QR_MANUAL.
     @Override
     @Transactional
     public EntryResponse createEntryByQr(EntryQrRequest request) {
@@ -167,15 +186,17 @@ public class EntryServiceImpl implements EntryService {
         ClientEntity client = clientRepository.findByQrToken(request.getQrToken())
                 .orElseThrow(() -> new NotFoundException("Neplatný QR kód."));
 
-        // Vytvorí nový request podľa nájdeného klienta a následne použije existujúcu logiku createEntry().
+        // Vytvorí nový request podľa nájdeného klienta.
+        // Následne použije existujúcu vstupnú logiku so spôsobom evidencie QR_MANUAL.
         EntryCreateRequest newRequest = new EntryCreateRequest();
         newRequest.setClientId(client.getClientId());
         newRequest.setNote(null);
 
-        return createEntry(newRequest);
+        return createEntry(newRequest, EntryMethod.QR_MANUAL);
     }
 
-    // Nájde klienta podľa QR tokenu a následne použije existujúcu logiku odchodu.
+    // Zaznamená odchod klienta na základe QR tokenu.
+    // Používa existujúcu odchodovú logiku so spôsobom evidencie QR_MANUAL.
     @Override
     @Transactional
     public EntryResponse registerDepartureByQr(String qrToken) {
@@ -183,7 +204,7 @@ public class EntryServiceImpl implements EntryService {
         ClientEntity client = clientRepository.findByQrToken(qrToken)
                 .orElseThrow(() -> new NotFoundException("Neplatný QR kód."));
 
-        return registerDeparture(client.getClientId());
+        return registerDeparture(client.getClientId(), EntryMethod.QR_MANUAL);
     }
 
     // Prevedie entitu vstupu na výstupný DTO objekt.

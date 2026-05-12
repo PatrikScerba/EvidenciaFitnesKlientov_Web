@@ -6,6 +6,7 @@ import sk.patrikscerba.gym.dto.entry.EntryCreateRequest;
 import sk.patrikscerba.gym.dto.entry.EntryQrRequest;
 import sk.patrikscerba.gym.dto.entry.EntryResponse;
 import sk.patrikscerba.gym.entity.ClientEntity;
+import sk.patrikscerba.gym.enums.EntryMethod;
 import sk.patrikscerba.gym.enums.EntryStatus;
 import sk.patrikscerba.gym.exception.NotFoundException;
 import sk.patrikscerba.gym.repository.ClientRepository;
@@ -43,14 +44,14 @@ public class EntryScanServiceImpl implements EntryScanService {
         );
 
         if (hasOpenEntry) {
-            return entryService.registerDeparture(client.getClientId());
+            return entryService.registerDeparture(client.getClientId(), EntryMethod.QR_SCAN);
         }
 
         EntryCreateRequest newRequest = new EntryCreateRequest();
         newRequest.setClientId(client.getClientId());
         newRequest.setNote(null);
 
-        return entryService.createEntry(newRequest);
+        return entryService.createEntry(newRequest, EntryMethod.QR_SCAN);
     }
 }
 
