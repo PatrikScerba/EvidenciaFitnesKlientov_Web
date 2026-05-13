@@ -25,7 +25,7 @@ public class EntryController {
         this.entryService = entryService;
     }
 
-    // Vytvorí nový záznam o vstupe klienta.
+    // Manuálne vytvorí nový záznam o vstupe klienta podľa jeho ID.
     // Service vrstva rozhodne, či bude vstup povolený alebo zamietnutý.
     @PostMapping
     public ResponseEntity<EntryResponse> createEntry(@Valid @RequestBody EntryCreateRequest request) {
@@ -33,14 +33,15 @@ public class EntryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // Zaznamená odchod klienta na poslednom aktívnom schválenom vstupe.
+    // Manuálne zaznamená odchod klienta podľa jeho ID.
+    // Používa sa vtedy, keď zamestnanec alebo admin explicitne vyberie klienta.
     @PatchMapping("/{clientId}/departure")
     public ResponseEntity<EntryResponse> registerDeparture(@PathVariable Long clientId) {
         EntryResponse response = entryService.registerDeparture(clientId);
         return ResponseEntity.ok(response);
     }
 
-    // Získá zoznam všetkých aktívnych vstupov (schválených a bez zaznamenaného odchodu).
+    // Získa zoznam všetkých aktívnych vstupov (schválených a bez zaznamenaného odchodu).
     @GetMapping("/active")
     public ResponseEntity<List<EntryResponse>> getActiveEntries() {
         List<EntryResponse> activeEntries = entryService.getActiveEntries();
@@ -48,14 +49,16 @@ public class EntryController {
     }
 
     // Vytvorí vstup klienta na základe QR tokenu.
+    // Použiteľné ako servisný QR režim pri manuálnom spracovaní príchodu.
     @PostMapping("/qr")
-    public ResponseEntity<EntryResponse> createEntryByQr(@RequestBody EntryQrRequest request) {
+    public ResponseEntity<EntryResponse> createEntryByQr(@Valid @RequestBody EntryQrRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(entryService.createEntryByQr(request));
     }
 
     // Zaznamená odchod klienta na základe QR tokenu.
+    // Použiteľné ako servisný QR režim pri manuálnom spracovaní odchodu.
     @PatchMapping("/qr/departure")
-    public ResponseEntity<EntryResponse> registerDepartureByQr(@RequestBody EntryQrRequest request) {
+    public ResponseEntity<EntryResponse> registerDepartureByQr(@Valid @RequestBody EntryQrRequest request) {
         return ResponseEntity.ok(entryService.registerDepartureByQr(request.getQrToken()));
     }
 }
