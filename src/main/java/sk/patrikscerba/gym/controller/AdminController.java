@@ -9,12 +9,16 @@ import sk.patrikscerba.gym.dto.auth.ResetPasswordResponse;
 import sk.patrikscerba.gym.dto.auth.SecurityQuestionResponse;
 import sk.patrikscerba.gym.dto.employee.EmployeeAccountResponse;
 import sk.patrikscerba.gym.dto.employee.EmployeeCreateRequest;
+import sk.patrikscerba.gym.dto.qr.QrCodeResponse;
+import sk.patrikscerba.gym.dto.qr.QrTokenResetRequest;
 import sk.patrikscerba.gym.service.auth.PasswordResetService;
 import sk.patrikscerba.gym.service.employee.EmployeeAccountService;
+import sk.patrikscerba.gym.service.qr.QrTokenResetService;
 
 /**
  * Controller pre administrátorské operácie.
- * Obsahuje endpointy na vytvorenie účtu zamestnanca a na reset hesla používateľov
+ * Obsahuje endpointy na vytvorenie účtu zamestnanca,
+ * reset hesla používateľov a reset QR tokenu klienta
  * prostredníctvom bezpečnostnej otázky a odpovede.
  */
 @RestController
@@ -23,11 +27,14 @@ public class AdminController {
 
     private final EmployeeAccountService employeeAccountService;
     private final PasswordResetService passwordResetService;
+    private final QrTokenResetService qrTokenResetService;
 
     public AdminController(EmployeeAccountService employeeAccountService,
-                           PasswordResetService passwordResetService) {
+                           PasswordResetService passwordResetService,
+                           QrTokenResetService qrTokenResetService) {
         this.employeeAccountService = employeeAccountService;
         this.passwordResetService = passwordResetService;
+        this.qrTokenResetService = qrTokenResetService;
     }
 
     // Endpoint na vytvorenie účtu zamestnanca.
@@ -53,6 +60,14 @@ public class AdminController {
             @Valid @RequestBody ResetPasswordRequest request) {
 
         ResetPasswordResponse response = passwordResetService.resetPasswordBySecurityAnswer(request);
+        return ResponseEntity.ok(response);
+    }
+
+    // Endpoint na reset QR tokenu klienta po overení bezpečnostnej odpovede.
+    @PostMapping("/clients/qr/reset-token")
+    public ResponseEntity<QrCodeResponse> resetClientQrToken(
+            @Valid @RequestBody QrTokenResetRequest request) {
+        QrCodeResponse response = qrTokenResetService.resetQrToken(request);
         return ResponseEntity.ok(response);
     }
 }
