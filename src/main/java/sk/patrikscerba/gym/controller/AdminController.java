@@ -13,6 +13,7 @@ import sk.patrikscerba.gym.dto.qr.QrCodeResponse;
 import sk.patrikscerba.gym.dto.qr.QrTokenResetRequest;
 import sk.patrikscerba.gym.service.auth.PasswordResetService;
 import sk.patrikscerba.gym.service.employee.EmployeeAccountService;
+import sk.patrikscerba.gym.service.qr.QrService;
 import sk.patrikscerba.gym.service.qr.QrTokenResetService;
 
 /**
@@ -28,13 +29,16 @@ public class AdminController {
     private final EmployeeAccountService employeeAccountService;
     private final PasswordResetService passwordResetService;
     private final QrTokenResetService qrTokenResetService;
+    private final QrService qrService;
 
     public AdminController(EmployeeAccountService employeeAccountService,
                            PasswordResetService passwordResetService,
-                           QrTokenResetService qrTokenResetService) {
+                           QrTokenResetService qrTokenResetService,
+                           QrService qrService) {
         this.employeeAccountService = employeeAccountService;
         this.passwordResetService = passwordResetService;
         this.qrTokenResetService = qrTokenResetService;
+        this.qrService = qrService;
     }
 
     // Endpoint na vytvorenie účtu zamestnanca.
@@ -69,6 +73,12 @@ public class AdminController {
             @Valid @RequestBody QrTokenResetRequest request) {
         QrCodeResponse response = qrTokenResetService.resetQrToken(request);
         return ResponseEntity.ok(response);
+    }
+
+    // Získanie QR údajov konkrétneho klienta podľa jeho ID.
+    @GetMapping("/client/{clientId}")
+    public QrCodeResponse getQrForClient(@PathVariable Long clientId) {
+        return qrService.getQrForClient(clientId);
     }
 }
 
