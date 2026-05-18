@@ -1,6 +1,7 @@
 package sk.patrikscerba.gym.service.qr;
 
 import sk.patrikscerba.gym.dto.qr.QrCodeResponse;
+import sk.patrikscerba.gym.dto.qr.QrCodeShowRequest;
 
 /**
  * Service rozhranie pre prácu s QR tokenom klienta.
@@ -16,4 +17,7 @@ public interface QrService {
 
     // Získa QR údaje aktuálne prihláseného klienta podľa emailu.
     QrCodeResponse getMyQr(String email);
+
+    // Overí bezpečnostnú odpoveď používateľa a po úspešnom overení vráti QR údaje klienta.
+    QrCodeResponse showQrAfterSecurityAnswer(QrCodeShowRequest request);
 }
