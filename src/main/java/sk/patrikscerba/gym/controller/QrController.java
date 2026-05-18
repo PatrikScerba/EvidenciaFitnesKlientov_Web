@@ -1,10 +1,10 @@
 package sk.patrikscerba.gym.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sk.patrikscerba.gym.dto.qr.QrCodeResponse;
+import sk.patrikscerba.gym.dto.qr.QrCodeShowRequest;
 import sk.patrikscerba.gym.service.qr.QrService;
 
 /**
@@ -26,5 +26,11 @@ public class QrController {
     @GetMapping("/me")
     public QrCodeResponse getMyQr(Authentication authentication) {
         return qrService.getMyQr(authentication.getName());
+    }
+
+    // Zobrazenie QR údajov klienta po overení bezpečnostnej odpovede.
+    @PostMapping("/show")
+    public QrCodeResponse showQrAfterSecurityAnswer(@Valid @RequestBody QrCodeShowRequest request) {
+        return qrService.showQrAfterSecurityAnswer(request);
     }
 }
