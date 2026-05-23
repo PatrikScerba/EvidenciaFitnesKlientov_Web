@@ -6,6 +6,7 @@ import ClientResultsTable from "./ClientResultsTable";
 import { searchClients, deleteClient } from "../../api/clientApi";
 import MembershipManagementSection from "../memberships/MembershipManagementSection";
 import EntryManagementSection from "../entries/EntryManagementSection";
+import AdminClientQrSection from "../qr/AdminClientQrSection";
 
 export default function ClientManagementSection({ activeView, views }) {
   const [searchResults, setSearchResults] = useState([]);
@@ -21,16 +22,20 @@ export default function ClientManagementSection({ activeView, views }) {
 
   const [entryClient, setEntryClient] = useState(null);
 
+  const [qrClient, setQrClient] = useState(null);
+
   useEffect(() => {
     setEditingClient(null);
     setMembershipClient(null);
     setEntryClient(null);
+    setQrClient(null);
   }, [activeView]);
 
   function handleEditClient(client) {
     setEditingClient(client);
     setMembershipClient(null);
     setEntryClient(null);
+    setQrClient(null);
   }
 
   function closeEditForm() {
@@ -45,6 +50,7 @@ export default function ClientManagementSection({ activeView, views }) {
     setSearchResults([]);
     setHasSearched(false);
     setEntryClient(null);
+    setQrClient(null);
     closeEditForm();
     closeMembershipForm();
   }
@@ -83,6 +89,7 @@ export default function ClientManagementSection({ activeView, views }) {
         prev.filter((client) => client.clientId !== id)
       );
       setEntryClient(null);
+      setQrClient(null);
       closeEditForm();
       closeMembershipForm();
       refreshClientList();
@@ -107,6 +114,8 @@ export default function ClientManagementSection({ activeView, views }) {
   function handleManageMembership(client) {
     setEditingClient(null);
     setMembershipClient(client);
+    setQrClient(null);
+    setEntryClient(null);
   }
 
   function closeMembershipForm() {
@@ -117,10 +126,22 @@ export default function ClientManagementSection({ activeView, views }) {
     setEntryClient(client);
     setEditingClient(null);
     setMembershipClient(null);
+    setQrClient(null);
   }
 
   function closeEntryForm() {
     setEntryClient(null);
+  }
+
+  function handleShowQr(client) {
+    setQrClient(client);
+    setEditingClient(null);
+    setMembershipClient(null);
+    setEntryClient(null);
+  }
+
+  function closeQrSection() {
+    setQrClient(null);
   }
 
   return (
@@ -140,6 +161,7 @@ export default function ClientManagementSection({ activeView, views }) {
                   onDelete={handleDeleteClient}
                   onManageMembership={handleManageMembership}
                   onManageEntry={handleEntryClient}
+                  onShowQr={handleShowQr}
                 />
               ))}
           </div>
@@ -149,6 +171,7 @@ export default function ClientManagementSection({ activeView, views }) {
       {isListView && (
         <div style={{ marginTop: "20px" }}>
           <ClientList
+            onShowQr={handleShowQr}
             onEdit={handleEditClient}
             onManageMembership={handleManageMembership}
             onManageEntry={handleEntryClient}
@@ -184,6 +207,11 @@ export default function ClientManagementSection({ activeView, views }) {
             client={entryClient}
             onClose={closeEntryForm}
           />
+        </div>
+      )}
+      {qrClient && (
+        <div style={{ marginTop: "20px" }}>
+          <AdminClientQrSection client={qrClient} onClose={closeQrSection} />
         </div>
       )}
     </>

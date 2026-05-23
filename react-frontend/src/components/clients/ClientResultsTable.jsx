@@ -4,6 +4,7 @@ export default function ClientResultsTable({
   onDelete,
   onManageMembership,
   onManageEntry,
+  onShowQr,
 }) {
   return (
     <table border="1" cellPadding="8">
@@ -52,6 +53,13 @@ export default function ClientResultsTable({
                 onClick={() => onManageEntry(client)}
               >
                 Vstup
+              </button>
+
+              <button
+                style={{ marginLeft: "10px" }}
+                onClick={() => onShowQr(client)}
+              >
+                QR kód
               </button>
             </td>
           </tr>

@@ -7,6 +7,7 @@ export default function ClientList({
   onDeleteSuccess,
   refreshKey,
   onManageEntry,
+  onShowQr,
 }) {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -101,6 +102,13 @@ export default function ClientList({
                     onClick={() => onManageEntry(client)}
                   >
                     Vstup
+                  </button>
+
+                  <button
+                    style={{ marginLeft: "10px" }}
+                    onClick={() => onShowQr(client)}
+                  >
+                    QR kód
                   </button>
                 </td>
               </tr>
