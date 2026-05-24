@@ -69,7 +69,7 @@ export default function AdminDashboard({ user }) {
           : "Aktuálne v fitnescentre"}
       </button>
 
-      <ClientManagementSection activeView={activeView} views={ADMIN_VIEWS} />
+      <ClientManagementSection activeView={activeView} views={ADMIN_VIEWS} userRole={user?.role} />
 
       {activeView === ADMIN_VIEWS.EMPLOYEE_REGISTER && (
         <div style={{ marginTop: "20px" }}>

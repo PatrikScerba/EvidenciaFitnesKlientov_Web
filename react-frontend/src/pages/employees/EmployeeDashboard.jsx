@@ -46,7 +46,7 @@ export default function EmployeeDashboard({ user }) {
           : "Aktuálne v fitnescentre"}
       </button>
 
-      <ClientManagementSection activeView={activeView} views={EMPLOYEE_VIEWS} />
+      <ClientManagementSection activeView={activeView} views={EMPLOYEE_VIEWS} userRole={user?.role} />
 
       {activeView === EMPLOYEE_VIEWS.CLIENT_REGISTER && (
         <div style={{ marginTop: "20px" }}>
