@@ -5,3 +5,10 @@ export async function getAdminClientQrCode(clientId) {
     method: "GET",
   });
 }
+
+export async function getEmployeeClientQrCode(data) {
+  return apiFetch("/api/qr/show", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
