@@ -12,3 +12,9 @@ export async function getEmployeeClientQrCode(data) {
     body: JSON.stringify(data),
   });
 }
+
+export async function getMyQr() {
+  return apiFetch("/api/qr/me", {
+    method: "GET",
+  });
+}
