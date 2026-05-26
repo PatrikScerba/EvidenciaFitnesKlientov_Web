@@ -27,8 +27,9 @@ export default function EmployeeClientQrSection({ client, onClose }) {
 
     try {
       const response = await getEmployeeClientQrCode({
+        email: client.email,
         clientId: client.clientId,
-        securityAnswer: securityAnswer,
+        securityAnswer: securityAnswer.trim(),
       });
 
       setQrData(response);
@@ -92,7 +93,9 @@ export default function EmployeeClientQrSection({ client, onClose }) {
           </>
         )}
 
-        {error && <div className="alert alert-danger mt-3">{error}</div>}
+        {error && (
+          <div style={{ color: "red", marginTop: "12px" }}>{error}</div>
+        )}
       </div>
     </div>
   );

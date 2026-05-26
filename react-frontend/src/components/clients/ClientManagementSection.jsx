@@ -7,6 +7,7 @@ import { searchClients, deleteClient } from "../../api/clientApi";
 import MembershipManagementSection from "../memberships/MembershipManagementSection";
 import EntryManagementSection from "../entries/EntryManagementSection";
 import AdminClientQrSection from "../qr/AdminClientQrSection";
+import EmployeeClientQrSection from "../qr/EmployeeClientQrSection";
 
 export default function ClientManagementSection({ activeView, views,userRole }) {
   const [searchResults, setSearchResults] = useState([]);
@@ -19,6 +20,7 @@ export default function ClientManagementSection({ activeView, views,userRole }) 
   const isSearchView = activeView === views.CLIENT_SEARCH;
   const isListView = activeView === views.CLIENT_LIST;
   const isAdmin = userRole === "ADMIN";
+  const isEmployee = userRole === "EMPLOYEE";
   const showEditForm = editingClient && (isSearchView || isListView);
 
   const [entryClient, setEntryClient] = useState(null);
@@ -213,6 +215,11 @@ export default function ClientManagementSection({ activeView, views,userRole }) 
       {qrClient && isAdmin && (
         <div style={{ marginTop: "20px" }}>
           <AdminClientQrSection client={qrClient} onClose={closeQrSection} />
+        </div>
+      )}
+      {qrClient && isEmployee && (
+        <div style={{ marginTop: "20px" }}>
+          <EmployeeClientQrSection client={qrClient} onClose={closeQrSection} />
         </div>
       )}
     </>
