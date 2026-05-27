@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ClientDetail from "../clients/ClientDetail";
 import { getMyMembership } from "../../api/membershipApi";
+import ClientQrSection from "../../components/qr/ClientQrSection";
 
 export default function ClientDashboard({ user }) {
   const [membership, setMembership] = useState(null);
@@ -40,7 +41,7 @@ export default function ClientDashboard({ user }) {
       ) : (
         <p>Nemáš žiadnu permanentku.</p>
       )}
-
+        <ClientQrSection />
       <ClientDetail />
     </div>
   );
