@@ -22,3 +22,10 @@ export async function resetPasswordBySecurityAnswer(resetData) {
     body: JSON.stringify(resetData),
   });
 }
+
+export async function resetClientQrToken(data) {
+  return apiFetch("/api/admin/clients/qr/reset-token", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
