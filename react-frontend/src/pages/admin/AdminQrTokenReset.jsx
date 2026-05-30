@@ -48,6 +48,10 @@ export default function AdminQrTokenReset() {
   async function handleResetQrToken(e) {
     e.preventDefault();
 
+    const confirmed = window.confirm(
+        "Naozaj chceš resetovať QR token klienta? Pôvodný QR token prestane byť platný."
+      );
+
     setError("");
     setMessage("");
 
