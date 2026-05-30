@@ -49,8 +49,8 @@ export default function AdminQrTokenReset() {
     e.preventDefault();
 
     const confirmed = window.confirm(
-        "Naozaj chceš resetovať QR token klienta? Pôvodný QR token prestane byť platný."
-      );
+      "Naozaj chceš resetovať QR token klienta? Pôvodný QR token prestane byť platný."
+    );
 
     setError("");
     setMessage("");
@@ -141,5 +141,3 @@ export default function AdminQrTokenReset() {
     </div>
   );
 }
-
-
