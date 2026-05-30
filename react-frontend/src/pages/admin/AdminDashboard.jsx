@@ -5,6 +5,7 @@ import AdminPasswordReset from "./AdminPasswordReset";
 import { ADMIN_VIEWS } from "../../constants/dashboardViews";
 import ClientManagementSection from "../../components/clients/ClientManagementSection";
 import ActiveEntriesDashboard from "../../components/entries/ActiveEntriesDashboard";
+import AdminQrTokenReset from "./AdminQrTokenReset";
 
 export default function AdminDashboard({ user }) {
   const [activeView, setActiveView] = useState(null);
@@ -47,6 +48,15 @@ export default function AdminDashboard({ user }) {
 
       <button
         style={{ marginRight: "10px" }}
+        onClick={() => toggleView(ADMIN_VIEWS.QR_TOKEN_RESET)}
+      >
+        {activeView === ADMIN_VIEWS.QR_TOKEN_RESET
+          ? "Zavrieť reset QR tokenu"
+          : "Reset QR tokenu"}
+      </button>
+
+      <button
+        style={{ marginRight: "10px" }}
         onClick={() => toggleView(ADMIN_VIEWS.CLIENT_LIST)}
       >
         {activeView === ADMIN_VIEWS.CLIENT_LIST
@@ -69,7 +79,11 @@ export default function AdminDashboard({ user }) {
           : "Aktuálne v fitnescentre"}
       </button>
 
-      <ClientManagementSection activeView={activeView} views={ADMIN_VIEWS} userRole={user?.role} />
+      <ClientManagementSection
+        activeView={activeView}
+        views={ADMIN_VIEWS}
+        userRole={user?.role}
+      />
 
       {activeView === ADMIN_VIEWS.EMPLOYEE_REGISTER && (
         <div style={{ marginTop: "20px" }}>
@@ -86,6 +100,12 @@ export default function AdminDashboard({ user }) {
       {activeView === ADMIN_VIEWS.PASSWORD_RESET && (
         <div style={{ marginTop: "20px" }}>
           <AdminPasswordReset />
+        </div>
+      )}
+
+      {activeView === ADMIN_VIEWS.QR_TOKEN_RESET && (
+        <div style={{ marginTop: "20px" }}>
+          <AdminQrTokenReset />
         </div>
       )}
 

@@ -5,6 +5,7 @@ export const ADMIN_VIEWS = {
   CLIENT_LIST: "client-list",
   CLIENT_SEARCH: "client-search",
   ACTIVE_ENTRIES: "active-entries",
+  QR_TOKEN_RESET: "qrTokenReset",
 };
 
 export const EMPLOYEE_VIEWS = {
