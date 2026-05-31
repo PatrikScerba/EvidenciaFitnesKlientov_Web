@@ -10,5 +10,8 @@ public interface EntryScanService {
 
     // Spracuje QR scan a rozhodne, či ide o príchod alebo odchod klienta.
     EntryResponse scanQrCode(EntryQrRequest request);
+
+    // Spracuje QR scan v servisnom režime, napríklad cez recepciu, a rozhodne o príchode alebo odchode klienta.
+    EntryResponse scanQrCodeServiceMode(EntryQrRequest request);
 }
 
