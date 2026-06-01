@@ -5,15 +5,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sk.patrikscerba.gym.dto.entry.EntryCreateRequest;
-import sk.patrikscerba.gym.dto.entry.EntryQrRequest;
 import sk.patrikscerba.gym.dto.entry.EntryResponse;
 import sk.patrikscerba.gym.service.entry.EntryService;
 
 import java.util.List;
 
 /**
- * Controller pre evidenciu vstupov klientov.
- * Zabezpečuje vytváranie záznamov o vstupe a zaznamenanie odchodu klienta.
+ * Controller pre manuálnu evidenciu vstupov a odchodov klientov.
+ * Umožňuje vytvárať vstupy, zaznamenávať odchody a zobraziť aktívne vstupy klientov.
  */
 @RestController
 @RequestMapping("/api/entries")
@@ -46,20 +45,6 @@ public class EntryController {
     public ResponseEntity<List<EntryResponse>> getActiveEntries() {
         List<EntryResponse> activeEntries = entryService.getActiveEntries();
         return ResponseEntity.ok(activeEntries);
-    }
-
-    // Vytvorí vstup klienta na základe QR tokenu.
-    // Použiteľné ako servisný QR režim pri manuálnom spracovaní príchodu.
-    @PostMapping("/qr")
-    public ResponseEntity<EntryResponse> createEntryByQr(@Valid @RequestBody EntryQrRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(entryService.createEntryByQr(request));
-    }
-
-    // Zaznamená odchod klienta na základe QR tokenu.
-    // Použiteľné ako servisný QR režim pri manuálnom spracovaní odchodu.
-    @PatchMapping("/qr/departure")
-    public ResponseEntity<EntryResponse> registerDepartureByQr(@Valid @RequestBody EntryQrRequest request) {
-        return ResponseEntity.ok(entryService.registerDepartureByQr(request.getQrToken()));
     }
 }
 
