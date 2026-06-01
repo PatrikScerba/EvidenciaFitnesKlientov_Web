@@ -3,7 +3,6 @@ package sk.patrikscerba.gym.service.entry;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sk.patrikscerba.gym.dto.entry.EntryCreateRequest;
-import sk.patrikscerba.gym.dto.entry.EntryQrRequest;
 import sk.patrikscerba.gym.dto.entry.EntryResponse;
 import sk.patrikscerba.gym.dto.membership.MembershipResponse;
 import sk.patrikscerba.gym.entity.ClientEntity;
@@ -23,9 +22,9 @@ import java.time.Period;
 import java.util.List;
 
 /**
- * Implementácia service logiky pre evidenciu vstupov klientov.
- * Zabezpečuje vytvorenie nového vstupu a vyhodnotenie,
- * či môže byť vstup schválený alebo zamietnutý.
+ * Implementácia service logiky pre evidenciu vstupov a odchodov klientov.
+ * Zabezpečuje vyhodnotenie pravidiel vstupu, vytváranie záznamov,
+ * evidenciu odchodov a správu aktívnych vstupov.
  */
 @Service
 public class EntryServiceImpl implements EntryService {
@@ -174,37 +173,6 @@ public class EntryServiceImpl implements EntryService {
         EntryEntity savedEntry = entryRepository.save(entry);
 
         return mapToResponse(savedEntry);
-    }
-
-    // Vytvorí vstup klienta na základe QR tokenu.
-    // Používa existujúcu vstupnú logiku so spôsobom evidencie QR_MANUAL.
-    @Override
-    @Transactional
-    public EntryResponse createEntryByQr(EntryQrRequest request) {
-
-        // Nájde klienta podľa QR tokenu.
-        ClientEntity client = clientRepository.findByQrToken(request.getQrToken())
-                .orElseThrow(() -> new NotFoundException("Neplatný QR kód."));
-
-        // Vytvorí nový request podľa nájdeného klienta.
-        // Následne použije existujúcu vstupnú logiku so spôsobom evidencie QR_MANUAL.
-        EntryCreateRequest newRequest = new EntryCreateRequest();
-        newRequest.setClientId(client.getClientId());
-        newRequest.setNote(null);
-
-        return createEntry(newRequest, EntryMethod.QR_MANUAL);
-    }
-
-    // Zaznamená odchod klienta na základe QR tokenu.
-    // Používa existujúcu odchodovú logiku so spôsobom evidencie QR_MANUAL.
-    @Override
-    @Transactional
-    public EntryResponse registerDepartureByQr(String qrToken) {
-
-        ClientEntity client = clientRepository.findByQrToken(qrToken)
-                .orElseThrow(() -> new NotFoundException("Neplatný QR kód."));
-
-        return registerDeparture(client.getClientId(), EntryMethod.QR_MANUAL);
     }
 
     // Prevedie entitu vstupu na výstupný DTO objekt.
