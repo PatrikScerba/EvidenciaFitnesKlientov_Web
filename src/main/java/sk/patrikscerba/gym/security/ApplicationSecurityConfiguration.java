@@ -59,10 +59,13 @@ public class ApplicationSecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/memberships/**").hasAnyRole("ADMIN", "EMPLOYEE")
 
                         .requestMatchers(HttpMethod.GET, "/api/entries/active").hasAnyRole("ADMIN", "EMPLOYEE")
-                        .requestMatchers(HttpMethod.POST, "/api/entries/scan").hasAnyRole("ADMIN", "EMPLOYEE")
 
-                        .requestMatchers(HttpMethod.POST, "/api/entries/**").hasAnyRole("ADMIN", "EMPLOYEE")
-                        .requestMatchers(HttpMethod.PATCH, "/api/entries/**").hasAnyRole("ADMIN", "EMPLOYEE")
+                        .requestMatchers(HttpMethod.POST, "/api/entries").hasAnyRole("ADMIN", "EMPLOYEE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/entries/*/departure").hasAnyRole("ADMIN", "EMPLOYEE")
+
+                        .requestMatchers(HttpMethod.POST, "/api/entries/qr/service-scan").hasAnyRole("ADMIN", "EMPLOYEE")
+                        
+                        .requestMatchers(HttpMethod.POST, "/api/entries/scan").hasAnyRole("ADMIN", "EMPLOYEE")
 
                         .requestMatchers(HttpMethod.GET, "/api/clients/me").hasRole("CLIENT")
                         .requestMatchers(HttpMethod.GET, "/api/clients/**").hasAnyRole("ADMIN", "EMPLOYEE")
@@ -72,9 +75,6 @@ public class ApplicationSecurityConfiguration {
 
                         .requestMatchers(HttpMethod.GET, "/api/qr/me").hasRole("CLIENT")
                         .requestMatchers(HttpMethod.POST, "/api/qr/show").hasRole("EMPLOYEE")
-
-                        .requestMatchers(HttpMethod.POST, "/api/entries/qr").hasAnyRole("ADMIN", "EMPLOYEE")
-                        .requestMatchers(HttpMethod.PATCH, "/api/entries/qr/departure").hasAnyRole("ADMIN", "EMPLOYEE")
 
                         // Všetky ostatné endpointy vyžadujú prihlásenie.
                         .anyRequest().authenticated()
