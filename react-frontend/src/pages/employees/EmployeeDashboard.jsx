@@ -3,6 +3,7 @@ import ClientRegister from "../clients/ClientRegister";
 import { EMPLOYEE_VIEWS } from "../../constants/dashboardViews";
 import ClientManagementSection from "../../components/clients/ClientManagementSection";
 import ActiveEntriesDashboard from "../../components/entries/ActiveEntriesDashboard";
+import QrServiceScanSection from "../../components/entries/QrServiceScanSection";
 
 export default function EmployeeDashboard({ user }) {
   const [activeView, setActiveView] = useState(null);
@@ -46,7 +47,20 @@ export default function EmployeeDashboard({ user }) {
           : "Aktuálne v fitnescentre"}
       </button>
 
-      <ClientManagementSection activeView={activeView} views={EMPLOYEE_VIEWS} userRole={user?.role} />
+      <button
+        style={{ marginLeft: "10px" }}
+        onClick={() => toggleView(EMPLOYEE_VIEWS.QR_SERVICE_SCAN)}
+      >
+        {activeView === EMPLOYEE_VIEWS.QR_SERVICE_SCAN
+          ? "Zavrieť servisný QR scan"
+          : "Servisný QR scan"}
+      </button>
+
+      <ClientManagementSection
+        activeView={activeView}
+        views={EMPLOYEE_VIEWS}
+        userRole={user?.role}
+      />
 
       {activeView === EMPLOYEE_VIEWS.CLIENT_REGISTER && (
         <div style={{ marginTop: "20px" }}>
@@ -56,6 +70,12 @@ export default function EmployeeDashboard({ user }) {
 
       {activeView === EMPLOYEE_VIEWS.ACTIVE_ENTRIES && (
         <ActiveEntriesDashboard />
+      )}
+
+      {activeView === EMPLOYEE_VIEWS.QR_SERVICE_SCAN && (
+        <div style={{ marginTop: "20px" }}>
+          <QrServiceScanSection />
+        </div>
       )}
     </div>
   );

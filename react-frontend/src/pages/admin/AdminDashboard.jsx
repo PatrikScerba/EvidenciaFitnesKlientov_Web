@@ -6,6 +6,7 @@ import { ADMIN_VIEWS } from "../../constants/dashboardViews";
 import ClientManagementSection from "../../components/clients/ClientManagementSection";
 import ActiveEntriesDashboard from "../../components/entries/ActiveEntriesDashboard";
 import AdminQrTokenReset from "./AdminQrTokenReset";
+import QrServiceScanSection from "../../components/entries/QrServiceScanSection";
 
 export default function AdminDashboard({ user }) {
   const [activeView, setActiveView] = useState(null);
@@ -79,6 +80,15 @@ export default function AdminDashboard({ user }) {
           : "Aktuálne v fitnescentre"}
       </button>
 
+      <button
+        style={{ marginLeft: "10px" }}
+        onClick={() => toggleView(ADMIN_VIEWS.QR_SERVICE_SCAN)}
+      >
+        {activeView === ADMIN_VIEWS.QR_SERVICE_SCAN
+          ? "Zavrieť servisný QR scan"
+          : "Servisný QR scan"}
+      </button>
+
       <ClientManagementSection
         activeView={activeView}
         views={ADMIN_VIEWS}
@@ -112,6 +122,11 @@ export default function AdminDashboard({ user }) {
       {activeView === ADMIN_VIEWS.ACTIVE_ENTRIES && (
         <div style={{ marginTop: "20px" }}>
           <ActiveEntriesDashboard />
+        </div>
+      )}
+      {activeView === ADMIN_VIEWS.QR_SERVICE_SCAN && (
+        <div style={{ marginTop: "20px" }}>
+          <QrServiceScanSection />
         </div>
       )}
     </div>
