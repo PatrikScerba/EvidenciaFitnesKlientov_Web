@@ -7,6 +7,7 @@ export const ADMIN_VIEWS = {
   ACTIVE_ENTRIES: "active-entries",
   QR_TOKEN_RESET: "qrTokenReset",
   QR_SERVICE_SCAN: "qr-service-scan",
+  QR_TURNSTILE_SCAN: "qr-turnstile-scan",
 };
 
 export const EMPLOYEE_VIEWS = {
@@ -15,4 +16,5 @@ export const EMPLOYEE_VIEWS = {
   CLIENT_SEARCH: "client-search",
   ACTIVE_ENTRIES: "active-entries",
   QR_SERVICE_SCAN: "qr-service-scan",
+  QR_TURNSTILE_SCAN: "qr-turnstile-scan",
 };

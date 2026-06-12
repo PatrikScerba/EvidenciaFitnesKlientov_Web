@@ -4,6 +4,7 @@ import { EMPLOYEE_VIEWS } from "../../constants/dashboardViews";
 import ClientManagementSection from "../../components/clients/ClientManagementSection";
 import ActiveEntriesDashboard from "../../components/entries/ActiveEntriesDashboard";
 import QrServiceScanSection from "../../components/entries/QrServiceScanSection";
+import QrTurnstileScanSection from "../../components/entries/QrTurnstileScanSection";
 
 export default function EmployeeDashboard({ user }) {
   const [activeView, setActiveView] = useState(null);
@@ -56,6 +57,15 @@ export default function EmployeeDashboard({ user }) {
           : "Servisný QR scan"}
       </button>
 
+      <button
+        style={{ marginLeft: "10px" }}
+        onClick={() => toggleView(EMPLOYEE_VIEWS.QR_TURNSTILE_SCAN)}
+      >
+        {activeView === EMPLOYEE_VIEWS.QR_TURNSTILE_SCAN
+          ? "Zavrieť turniketový režim"
+          : "Turniketový režim"}
+      </button>
+
       <ClientManagementSection
         activeView={activeView}
         views={EMPLOYEE_VIEWS}
@@ -75,6 +85,11 @@ export default function EmployeeDashboard({ user }) {
       {activeView === EMPLOYEE_VIEWS.QR_SERVICE_SCAN && (
         <div style={{ marginTop: "20px" }}>
           <QrServiceScanSection />
+        </div>
+      )}
+      {activeView === EMPLOYEE_VIEWS.QR_TURNSTILE_SCAN && (
+        <div style={{ marginTop: "20px" }}>
+          <QrTurnstileScanSection />
         </div>
       )}
     </div>

@@ -7,6 +7,7 @@ import ClientManagementSection from "../../components/clients/ClientManagementSe
 import ActiveEntriesDashboard from "../../components/entries/ActiveEntriesDashboard";
 import AdminQrTokenReset from "./AdminQrTokenReset";
 import QrServiceScanSection from "../../components/entries/QrServiceScanSection";
+import QrTurnstileScanSection from "../../components/entries/QrTurnstileScanSection";
 
 export default function AdminDashboard({ user }) {
   const [activeView, setActiveView] = useState(null);
@@ -89,6 +90,15 @@ export default function AdminDashboard({ user }) {
           : "Servisný QR scan"}
       </button>
 
+      <button
+        style={{ marginLeft: "10px" }}
+        onClick={() => toggleView(ADMIN_VIEWS.QR_TURNSTILE_SCAN)}
+      >
+        {activeView === ADMIN_VIEWS.QR_TURNSTILE_SCAN
+          ? "Zavrieť turniketový režim"
+          : "Turniketový režim"}
+      </button>
+
       <ClientManagementSection
         activeView={activeView}
         views={ADMIN_VIEWS}
@@ -127,6 +137,11 @@ export default function AdminDashboard({ user }) {
       {activeView === ADMIN_VIEWS.QR_SERVICE_SCAN && (
         <div style={{ marginTop: "20px" }}>
           <QrServiceScanSection />
+        </div>
+      )}
+      {activeView === ADMIN_VIEWS.QR_TURNSTILE_SCAN && (
+        <div style={{ marginTop: "20px" }}>
+          <QrTurnstileScanSection />
         </div>
       )}
     </div>
