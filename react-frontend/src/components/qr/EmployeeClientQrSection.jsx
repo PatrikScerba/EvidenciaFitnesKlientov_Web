@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getEmployeeClientQrCode } from "../../api/qrApi";
 import QrCodeDisplay from "./QrCodeDisplay";
 
@@ -7,6 +7,12 @@ export default function EmployeeClientQrSection({ client, onClose }) {
   const [qrData, setQrData] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setSecurityAnswer("");
+    setQrData(null);
+    setError("");
+  }, [client]);
 
   async function handleShowQr(event) {
     event.preventDefault();
