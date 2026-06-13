@@ -19,10 +19,8 @@
 
 ### 3. [HOTOVO] Používateľský modul a bezpečnosť
 
-- UserEntity
-- UserRepository
-- ClientEntity pre väzbu na používateľský účet
-- väzba User ↔ Client
+- používateľské účty
+- prepojenie klienta s používateľským účtom
 - registrácia používateľa
 - registrácia zamestnanca
 - admin inicializácia
@@ -89,14 +87,6 @@
 
 ### 6. [HOTOVO] Modul permanentiek
 
-- MembershipEntity
-- MembershipRepository
-- MembershipService
-- MembershipController
-- MembershipCreateRequest
-- MembershipResponse
-- MembershipStatus
-- MembershipDuration
 - vytvorenie alebo predĺženie permanentky
 - prepojenie permanentky na klienta
 - platnosť od / do
@@ -109,46 +99,52 @@
 
 ### 7. [HOTOVO] Modul vstupov a odchodov
 
-- EntryEntity
-- EntryRepository
-- EntryService
-- EntryController
-- EntryStatus
-- Reason
-- EntryMethod
+#### 7.1 Evidencia vstupov
+
 - evidencia príchodu klienta
 - evidencia odchodu klienta
 - kontrola platnej permanentky pri vstupe
 - evidencia povolených aj zamietnutých vstupov
 - ochrana pred viacerými aktívnymi vstupmi naraz
 - evidencia spôsobu vstupu a odchodu
-- načítanie aktuálne prítomných klientov
+
+#### 7.2 [HOTOVO] Spôsoby evidencie
+
+- manuálny vstup a odchod klienta
+- servisný QR scan vstupu a odchodu cez fyzickú QR čítačku
+- simulácia turniketového vstupného systému cez kameru a QR kód
+
+#### 7.3 [HOTOVO] Dashboard funkcie
+
 - frontend API vrstva pre vstupy
 - frontend zobrazenie aktuálne prítomných klientov
 
-### 8. [ROZPRACOVANÉ] QR modul
+### 8. [HOTOVO] QR modul
 
-- QR token v ClientEntity
+#### 8.1 [HOTOVO] Správa QR tokenov
+
+- QR token pre klienta
 - automatické generovanie QR tokenu pri registrácii klienta
-- QrService
-- QrController
-- QrCodeResponse
-- QrCodeShowRequest
-- QrTokenResetRequest
+- reset QR tokenu administrátorom
+
+#### 8.2 [HOTOVO] Zobrazenie QR kódu
+
 - získanie QR údajov klienta podľa ID
 - zobrazenie QR po overení bezpečnostnej otázky
-- reset QR tokenu administrátorom
-- frontend API vrstva pre QR
-- komponent na zobrazenie QR kódu
-- zobrazenie QR kódu v administrátorskej správe klientov
-- zobrazenie QR kódu v zamestnaneckej správe klientov
 - získanie vlastného QR kódu pre CLIENT rolu
 
-### 9. [ROZPRACOVANÉ] QR vstup / odchod a scan logika
+#### 8.3 [HOTOVO] Administrácia QR kódov
 
-- EntryQrRequest
-- EntryScanController
-- EntryScanService
+- zobrazenie QR kódu v administrátorskej správe klientov
+- zobrazenie QR kódu v zamestnaneckej správe klientov
+
+#### 8.4 [HOTOVO] Frontend integrácia
+
+- frontend API vrstva pre QR
+- komponent na zobrazenie QR kódu
+
+### 9. [HOTOVO] QR vstup / odchod a scan logika
+
 - vstup klienta cez QR token
 - odchod klienta cez QR token
 - napojenie QR tokenu na existujúcu entry logiku
@@ -156,9 +152,25 @@
 - ošetrenie neplatného QR tokenu
 - ošetrenie klienta bez platnej permanentky
 - Postman testy QR vstupu a odchodu
-- neskôr frontend simulácia QR scanovania
 
-### 10. [PLÁN] Štatistiky a história
+### 10. [PLÁN] Email modul
+
+- odosielanie emailov zo systému
+- nastavenie Spring Mail závislostí
+- SMTP konfigurácia
+- bezpečné uloženie prihlasovacích údajov cez environment variables
+- nastavenie environment variables v IntelliJ Run Configuration
+- základná HTML emailová šablóna
+- spoločná emailová šablóna a podpis systému Gym Management System
+- odoslanie emailu konkrétnemu klientovi
+- odosielanie emailu s prílohou
+- odoslanie hromadného emailu viacerým klientom
+- šablóna pre odoslanie QR údajov klientovi
+- šablóna pre hromadnú správu klientom
+- šablóna pre upozornenie na expirovanú permanentku
+- manuálne odoslanie upozornenia na expirovanú permanentku
+
+### 11. [PLÁN] Štatistiky a história
 
 - história vstupov klienta
 - história permanentiek
@@ -168,7 +180,7 @@
 - vlastné štatistiky pre CLIENT rolu
 - štatistiky pre ADMIN / EMPLOYEE
 
-### 11. [PLÁN] UI / UX doladenie frontend aplikácie
+### 12. [PLÁN] UI / UX doladenie frontend aplikácie
 
 - Bootstrap rozloženie stránok
 - zjednotenie kariet, tabuliek a tlačidiel
