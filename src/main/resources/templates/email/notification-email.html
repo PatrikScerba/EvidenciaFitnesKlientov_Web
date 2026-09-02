@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gym Management System</title>
+</head>
+<body>
+
+<h2>Gym Management System</h2>
+
+<p>Dobrý deň,</p>
+
+<p th:if="${hasAttachment}">
+    Tento email obsahuje prílohu.
+    Môžete si ju uložiť do zariadenia a použiť podľa potreby.
+</p>
+
+<p th:if="${message != null and !message.isBlank()}"
+   th:text="${message}"></p>
+
+<div th:replace="~{email/fragments/footer :: emailFooter}"></div>
+
+</body>
+</html>
