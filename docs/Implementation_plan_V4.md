@@ -153,7 +153,7 @@
 - ošetrenie klienta bez platnej permanentky
 - Postman testy QR vstupu a odchodu
 
-### 10. [PLÁN] Email modul
+### 10. [ROZPRACOVANÉ] Email modul
 
 - odosielanie emailov zo systému
 - nastavenie Spring Mail závislostí
