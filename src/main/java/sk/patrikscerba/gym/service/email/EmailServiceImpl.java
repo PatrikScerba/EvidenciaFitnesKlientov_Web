@@ -19,7 +19,7 @@ import java.util.List;
 public class EmailServiceImpl implements EmailService {
 
     private static final String SENDER_NAME = "Gym Management System";
-
+    private static final long MAX_ATTACHMENT_SIZE = 25L * 1024 * 1024;
     private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine templateEngine;
 
@@ -31,7 +31,6 @@ public class EmailServiceImpl implements EmailService {
         this.templateEngine = templateEngine;
     }
 
-    // Odošle HTML e-mail na základe údajov z prijatej požiadavky.
     @Override
     public void sendEmail(EmailRequest emailRequest,
                           List<MultipartFile> attachments
@@ -39,11 +38,27 @@ public class EmailServiceImpl implements EmailService {
         boolean hasAttachment =
                 attachments != null && !attachments.isEmpty();
 
+        if (hasAttachment) {
+
+            long totalAttachmentsSize = 0;
+
+            for (MultipartFile attachment : attachments) {
+                totalAttachmentsSize += attachment.getSize();
+            }
+            if (totalAttachmentsSize > MAX_ATTACHMENT_SIZE) {
+
+                throw new IllegalArgumentException(
+                        "Celková veľkosť príloh nemôže byť väčšia ako 25 MB."
+                );
+            }
+        }
+
         try {
             Context context = new Context();
             context.setVariable("recipientName", emailRequest.getRecipientName());
             context.setVariable("message", emailRequest.getMessage());
             context.setVariable("hasAttachment", hasAttachment);
+
 
             String htmlContent = templateEngine.process("email/notification-email", context);
 
