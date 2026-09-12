@@ -24,8 +24,13 @@ public class NotificationEmailServiceImpl implements NotificationEmailService {
     @Override
     public void sendEmail(EmailSendRequest request, List<MultipartFile> attachments) {
 
-        List<ClientEntity> clients =
-                clientRepository.findAllById(request.getClientIds());
+        List<ClientEntity> clients;
+
+        if (request.isSendToAll()) {
+            clients = clientRepository.findAll();
+        } else {
+            clients = clientRepository.findAllById(request.getClientIds());
+        }
 
         for (ClientEntity client : clients) {
             EmailRequest emailRequest = new EmailRequest();
