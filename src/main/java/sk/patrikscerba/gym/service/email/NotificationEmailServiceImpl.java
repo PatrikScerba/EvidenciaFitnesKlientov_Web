@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 import sk.patrikscerba.gym.dto.email.EmailRequest;
 import sk.patrikscerba.gym.dto.email.EmailSendRequest;
 import sk.patrikscerba.gym.entity.ClientEntity;
+import sk.patrikscerba.gym.exception.BusinessException;
 import sk.patrikscerba.gym.repository.ClientRepository;
 
 import java.util.List;
@@ -23,6 +24,23 @@ public class NotificationEmailServiceImpl implements NotificationEmailService {
 
     @Override
     public void sendEmail(EmailSendRequest request, List<MultipartFile> attachments) {
+
+        if (request.isSendToAll()
+                && request.getClientIds() != null
+                && !request.getClientIds().isEmpty()) {
+
+            throw new BusinessException(
+                    "Pri odosielaní všetkým klientom nesmú byť zadané konkrétne ID klientov."
+            );
+        }
+
+        if (!request.isSendToAll()
+                && (request.getClientIds() == null || request.getClientIds().isEmpty())) {
+
+            throw new BusinessException(
+                    "Musí byť zvolený aspoň jeden klient."
+            );
+        }
 
         List<ClientEntity> clients;
 
