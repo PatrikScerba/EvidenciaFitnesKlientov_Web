@@ -48,6 +48,12 @@ public class NotificationEmailServiceImpl implements NotificationEmailService {
             clients = clientRepository.findAll();
         } else {
             clients = clientRepository.findAllById(request.getClientIds());
+
+            if (clients.size() != request.getClientIds().size()){
+                throw new BusinessException(
+                        "Jeden alebo viacerí zo zvolených klientov neexistujú."
+                );
+            }
         }
 
         for (ClientEntity client : clients) {
