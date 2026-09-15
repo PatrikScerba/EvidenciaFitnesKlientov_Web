@@ -56,6 +56,12 @@ public class NotificationEmailServiceImpl implements NotificationEmailService {
             }
         }
 
+        if (clients.isEmpty()) {
+            throw new BusinessException(
+                    "Nenašiel sa žiadny klient pre odoslanie emailu."
+            );
+        }
+
         for (ClientEntity client : clients) {
             EmailRequest emailRequest = new EmailRequest();
 
