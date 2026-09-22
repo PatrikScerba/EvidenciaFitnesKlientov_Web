@@ -6,6 +6,10 @@
 </head>
 <body>
 
+<p>
+    Dobrý deň, <span th:text="${recipientName}"></span>,
+</p>
+
 <p th:text="${message}"></p>
 
 <div th:replace="~{email/fragments/footer :: emailFooter}"></div>
