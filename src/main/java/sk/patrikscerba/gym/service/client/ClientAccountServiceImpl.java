@@ -12,6 +12,7 @@ import sk.patrikscerba.gym.exception.BusinessException;
 import sk.patrikscerba.gym.exception.ConflictException;
 import sk.patrikscerba.gym.repository.ClientRepository;
 import sk.patrikscerba.gym.repository.UserRepository;
+import sk.patrikscerba.gym.service.email.SystemEmailService;
 import sk.patrikscerba.gym.service.qr.QrService;
 
 import java.security.SecureRandom;
@@ -35,15 +36,18 @@ public class ClientAccountServiceImpl implements ClientAccountService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final QrService qrService;
+    private final SystemEmailService systemEmailService;
 
     public ClientAccountServiceImpl(ClientRepository clientRepository,
                                     UserRepository userRepository,
                                     PasswordEncoder passwordEncoder,
+                                    SystemEmailService systemEmailService,
                                     QrService qrService) {
         this.clientRepository = clientRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.qrService = qrService;
+        this.systemEmailService = systemEmailService;
     }
 
     // Zaregistruje klienta, vytvorí mu používateľský účet a vráti odpoveď s dočasným heslom.
@@ -99,6 +103,17 @@ public class ClientAccountServiceImpl implements ClientAccountService {
         userEntity.setClient(savedClient);
 
         UserEntity savedUser = userRepository.save(userEntity);
+
+        // Odoslanie potvrdzovacieho e-mailu po úspešnom vytvorení klienta a používateľského účtu.
+        try {
+            systemEmailService.sendRegistrationConfirmation(
+                    savedClient.getEmail(),
+                    savedClient.getFirstName(),
+                    savedClient.getLastName()
+            );
+        } catch (Exception e) {
+            throw new BusinessException("Nepodarilo sa odoslať potvrdzovací email: " + e.getMessage());
+        }
 
         // Zostavenie odpovede, ktorú backend pošle frontendu.
         ClientAccountResponse response = new ClientAccountResponse();
