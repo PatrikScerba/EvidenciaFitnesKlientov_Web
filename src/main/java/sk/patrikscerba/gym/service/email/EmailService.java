@@ -13,4 +13,10 @@ public interface EmailService {
     // Odošle HTML email.
     void sendEmail(EmailRequest emailRequest,
                    List<MultipartFile> attachments);
+
+
+    void sendEmailWithQr(
+            EmailRequest emailRequest,
+            byte[] qrImage
+    );
 }

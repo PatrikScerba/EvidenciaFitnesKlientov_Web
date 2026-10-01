@@ -3,6 +3,7 @@ package sk.patrikscerba.gym.service.email;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -47,23 +48,48 @@ public class EmailServiceImpl implements EmailService {
     public void sendEmail(EmailRequest emailRequest,
                           List<MultipartFile> attachments
     ) {
-        boolean hasAttachment =
+
+        sendEmailInternal(emailRequest, attachments, null);
+    }
+
+    @Override
+    public void sendEmailWithQr(
+            EmailRequest emailRequest,
+            byte[] qrImage
+    ) {
+        if (qrImage == null || qrImage.length == 0) {
+            throw new IllegalArgumentException(
+                    "QR obrázok nesmie byť prázdny."
+            );
+        }
+
+        sendEmailInternal(emailRequest, null, qrImage);
+    }
+
+    private void sendEmailInternal(
+            EmailRequest emailRequest,
+            List<MultipartFile> attachments,
+            byte[] qrImage
+    ) {
+        boolean hasUploadedAttachments =
                 attachments != null && !attachments.isEmpty();
 
-        if (hasAttachment) {
+        boolean hasAttachment =
+                hasUploadedAttachments || qrImage != null;
 
-            // Spočíta celkovú veľkosť všetkých príloh a overí povolený limit.
-            long totalAttachmentsSize = 0;
+        long totalAttachmentsSize =
+                qrImage != null ? qrImage.length : 0;
 
+        if (hasUploadedAttachments) {
             for (MultipartFile attachment : attachments) {
                 totalAttachmentsSize += attachment.getSize();
             }
-            if (totalAttachmentsSize > MAX_ATTACHMENT_SIZE) {
+        }
 
-                throw new IllegalArgumentException(
-                        "Celková veľkosť príloh nemôže byť väčšia ako 25 MB."
-                );
-            }
+        if (totalAttachmentsSize > MAX_ATTACHMENT_SIZE) {
+            throw new IllegalArgumentException(
+                    "Celková veľkosť príloh nemôže byť väčšia ako 25 MB."
+            );
         }
 
         try {
@@ -74,8 +100,13 @@ public class EmailServiceImpl implements EmailService {
             context.setVariable("message", emailRequest.getMessage());
             context.setVariable("hasAttachment", hasAttachment);
 
-            // Vytvorí výsledný HTML obsah e-mailu z Thymeleaf šablóny.
-            String htmlContent = templateEngine.process("email/notification-email", context);
+            // Vyberie HTML šablónu podľa typu odosielaného e-mailu.
+            String template = qrImage != null
+                    ? "email/system-email"
+                    : "email/notification-email";
+
+            // Vygeneruje HTML obsah z vybranej šablóny.
+            String htmlContent = templateEngine.process(template, context);
 
             // Vytvorí MIME správu s podporou HTML obsahu a vložených zdrojov.
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -93,8 +124,7 @@ public class EmailServiceImpl implements EmailService {
             helper.setText(htmlContent, true);
             helper.addInline("logo", logo);
 
-
-            if (hasAttachment) {
+            if (hasUploadedAttachments) {
                 for (MultipartFile attachment : attachments) {
                     String attachmentName = attachment.getOriginalFilename();
 
@@ -107,6 +137,14 @@ public class EmailServiceImpl implements EmailService {
                             attachment
                     );
                 }
+            }
+
+            if (qrImage != null) {
+                helper.addAttachment(
+                        "QR-kod.png",
+                        new ByteArrayResource(qrImage),
+                        "image/png"
+                );
             }
 
             javaMailSender.send(mimeMessage);
