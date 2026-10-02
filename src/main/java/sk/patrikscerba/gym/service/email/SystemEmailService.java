@@ -5,6 +5,7 @@ public interface SystemEmailService {
     void sendRegistrationConfirmation(
             String email,
             String firstName,
-            String lastName
+            String lastName,
+            String qrToken
     );
 }
