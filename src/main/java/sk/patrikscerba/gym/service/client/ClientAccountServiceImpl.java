@@ -109,7 +109,8 @@ public class ClientAccountServiceImpl implements ClientAccountService {
             systemEmailService.sendRegistrationConfirmation(
                     savedClient.getEmail(),
                     savedClient.getFirstName(),
-                    savedClient.getLastName()
+                    savedClient.getLastName(),
+                    savedClient.getQrToken()
             );
         } catch (Exception e) {
             throw new BusinessException("Nepodarilo sa odoslať potvrdzovací email: " + e.getMessage());
