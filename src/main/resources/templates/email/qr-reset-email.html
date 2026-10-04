@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Nový QR kód</title>
+</head>
+<body>
+
+<p>
+  Dobrý deň, <span th:text="${recipientName}"></span>,
+</p>
+
+<p>
+  Váš QR kód bol úspešne obnovený.
+</p>
+
+<p>
+  V prílohe tohto e-mailu nájdete váš nový QR kód,
+  ktorý môžete používať pri vstupe do fitness centra.
+</p>
+
+<p>
+  Predchádzajúci QR kód už nie je platný.
+</p>
+
+<div th:replace="~{email/fragments/footer :: emailFooter}"></div>
+
+</body>
+</html>
