@@ -2,6 +2,7 @@ package sk.patrikscerba.gym.service.email;
 
 import org.springframework.web.multipart.MultipartFile;
 import sk.patrikscerba.gym.dto.email.EmailRequest;
+import sk.patrikscerba.gym.enums.EmailTemplate;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ public interface EmailService {
 
     void sendEmailWithQr(
             EmailRequest emailRequest,
-            byte[] qrImage
+            byte[] qrImage,
+             EmailTemplate emailTemplate
     );
 }

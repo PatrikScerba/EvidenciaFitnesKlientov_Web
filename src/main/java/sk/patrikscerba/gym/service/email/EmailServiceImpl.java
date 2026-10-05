@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import sk.patrikscerba.gym.dto.email.EmailRequest;
+import sk.patrikscerba.gym.enums.EmailTemplate;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -49,13 +50,14 @@ public class EmailServiceImpl implements EmailService {
                           List<MultipartFile> attachments
     ) {
 
-        sendEmailInternal(emailRequest, attachments, null);
+        sendEmailInternal(emailRequest, attachments, null,EmailTemplate.NOTIFICATION);
     }
 
     @Override
     public void sendEmailWithQr(
             EmailRequest emailRequest,
-            byte[] qrImage
+            byte[] qrImage,
+            EmailTemplate emailTemplate
     ) {
         if (qrImage == null || qrImage.length == 0) {
             throw new IllegalArgumentException(
@@ -63,13 +65,15 @@ public class EmailServiceImpl implements EmailService {
             );
         }
 
-        sendEmailInternal(emailRequest, null, qrImage);
+        sendEmailInternal(emailRequest, null, qrImage, emailTemplate);
     }
 
     private void sendEmailInternal(
             EmailRequest emailRequest,
             List<MultipartFile> attachments,
-            byte[] qrImage
+            byte[] qrImage,
+            EmailTemplate emailTemplate
+
     ) {
         boolean hasUploadedAttachments =
                 attachments != null && !attachments.isEmpty();
@@ -100,13 +104,11 @@ public class EmailServiceImpl implements EmailService {
             context.setVariable("message", emailRequest.getMessage());
             context.setVariable("hasAttachment", hasAttachment);
 
-            // Vyberie HTML šablónu podľa typu odosielaného e-mailu.
-            String template = qrImage != null
-                    ? "email/system-email"
-                    : "email/notification-email";
-
-            // Vygeneruje HTML obsah z vybranej šablóny.
-            String htmlContent = templateEngine.process(template, context);
+            // Vygeneruje HTML obsah podľa zvolenej e-mailovej šablóny.
+            String htmlContent = templateEngine.process(
+                    emailTemplate.getTemplatePath(),
+                    context
+            );
 
             // Vytvorí MIME správu s podporou HTML obsahu a vložených zdrojov.
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
