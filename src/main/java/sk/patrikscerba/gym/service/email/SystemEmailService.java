@@ -8,4 +8,13 @@ public interface SystemEmailService {
             String lastName,
             String qrToken
     );
+
+    void sendQrResetConfirmation(
+            String email,
+            String firstName,
+            String lastName,
+            String qrToken
+    );
+
+
 }
