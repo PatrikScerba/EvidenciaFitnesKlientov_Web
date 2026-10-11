@@ -1,5 +1,6 @@
 package sk.patrikscerba.gym.service.qr;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,6 +8,7 @@ import sk.patrikscerba.gym.dto.qr.QrCodeResponse;
 import sk.patrikscerba.gym.dto.qr.QrTokenResetRequest;
 import sk.patrikscerba.gym.entity.ClientEntity;
 import sk.patrikscerba.gym.entity.UserEntity;
+import sk.patrikscerba.gym.event.QrTokenResetEvent;
 import sk.patrikscerba.gym.exception.BusinessException;
 import sk.patrikscerba.gym.exception.NotFoundException;
 import sk.patrikscerba.gym.repository.ClientRepository;
@@ -24,16 +26,18 @@ public class QrTokenResetServiceImpl implements QrTokenResetService {
     private final UserRepository userRepository;
     private final QrService qrService;
     private final PasswordEncoder passwordEncoder;
+    private final ApplicationEventPublisher eventPublisher;
 
     public QrTokenResetServiceImpl(
             ClientRepository clientRepository,
             UserRepository userRepository,
             QrService qrService,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,ApplicationEventPublisher eventPublisher) {
         this.clientRepository = clientRepository;
         this.userRepository = userRepository;
         this.qrService = qrService;
         this.passwordEncoder = passwordEncoder;
+        this.eventPublisher = eventPublisher;
     }
 
     // Resetuje QR token klienta po úspešnom overení bezpečnostnej odpovede.
@@ -70,6 +74,17 @@ public class QrTokenResetServiceImpl implements QrTokenResetService {
         client.setQrToken(qrService.generateQrToken());
 
         ClientEntity savedClient = clientRepository.save(client);
+
+        // Publikovanie udalosti po vygenerovaní nového QR tokenu.
+        // Listener odošle e-mail až po úspešnom commite transakcie.
+        eventPublisher.publishEvent(
+                new QrTokenResetEvent(
+                        savedClient.getEmail(),
+                        savedClient.getFirstName(),
+                        savedClient.getLastName(),
+                        savedClient.getQrToken()
+                )
+        );
 
         // Vytvorenie odpovede pre frontend.
         QrCodeResponse response = new QrCodeResponse();
