@@ -12,11 +12,21 @@ export default function useEmailForm() {
 
   const attachmentInputRef = useRef(null);
 
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setEmailData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   return {
     emailData,
     attachments,
     error,
     isSending,
     attachmentInputRef,
+    handleChange,
   };
 }
