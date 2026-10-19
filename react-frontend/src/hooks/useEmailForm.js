@@ -12,6 +12,12 @@ export default function useEmailForm() {
 
   const attachmentInputRef = useRef(null);
 
+  const handleAttachmentsChange = (event) => {
+    const selectedFiles = Array.from(event.target.files ?? []);
+
+    setAttachments(selectedFiles);
+  };
+
   const handleChange = (event) => {
     const { name, value } = event.target;
 
@@ -28,5 +34,6 @@ export default function useEmailForm() {
     isSending,
     attachmentInputRef,
     handleChange,
+    handleAttachmentsChange,
   };
 }
