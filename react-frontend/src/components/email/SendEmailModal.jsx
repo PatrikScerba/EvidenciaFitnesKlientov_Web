@@ -1,7 +1,14 @@
 import useEmailForm from "../../hooks/useEmailForm";
 
 export default function SendEmailModal({ client, onClose }) {
-  const { emailData, error, isSending, handleChange } = useEmailForm();
+  const {
+    emailData,
+    error,
+    isSending,
+    handleChange,
+    attachmentInputRef,
+    handleAttachmentsChange,
+  } = useEmailForm();
 
   return (
     <div style={{ padding: "20px", border: "1px solid #ccc" }}>
@@ -32,6 +39,16 @@ export default function SendEmailModal({ client, onClose }) {
             onChange={handleChange}
             maxLength={5000}
             rows={6}
+          />
+        </div>
+
+        <div>
+          <label>Prílohy</label>
+          <input
+            type="file"
+            multiple
+            ref={attachmentInputRef}
+            onChange={handleAttachmentsChange}
           />
         </div>
 
