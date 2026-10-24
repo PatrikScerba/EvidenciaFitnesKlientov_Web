@@ -56,5 +56,6 @@ export default function useEmailForm() {
     attachmentInputRef,
     handleChange,
     handleAttachmentsChange,
+    handleSubmit,
   };
 }

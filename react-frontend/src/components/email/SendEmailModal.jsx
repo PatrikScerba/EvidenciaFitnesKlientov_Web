@@ -8,7 +8,14 @@ export default function SendEmailModal({ client, onClose }) {
     handleChange,
     attachmentInputRef,
     handleAttachmentsChange,
+    handleSubmit,
   } = useEmailForm();
+
+  const onSubmit = async (event) => {
+    event.preventDefault();
+
+    await handleSubmit(client.clientId);
+  };
 
   return (
     <div style={{ padding: "20px", border: "1px solid #ccc" }}>
@@ -18,7 +25,7 @@ export default function SendEmailModal({ client, onClose }) {
         Príjemca: {client.firstName} {client.lastName} ({client.email})
       </p>
 
-      <form>
+      <form onSubmit={onSubmit}>
         <div>
           <label>Predmet</label>
           <input
@@ -53,6 +60,10 @@ export default function SendEmailModal({ client, onClose }) {
         </div>
 
         {error && <p style={{ color: "red" }}>{error}</p>}
+
+        <button type="button" disabled={isSending}>
+          Odoslať email
+        </button>
 
         <button type="button" onClick={onClose} disabled={isSending}>
           Zrušiť
