@@ -8,6 +8,7 @@ export default function ClientList({
   refreshKey,
   onManageEntry,
   onShowQr,
+  onSendEmail,
 }) {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -109,6 +110,12 @@ export default function ClientList({
                     onClick={() => onShowQr(client)}
                   >
                     QR kód
+                  </button>
+                  <button
+                    style={{ marginLeft: "10px" }}
+                    onClick={() => onSendEmail(client)}
+                  >
+                    E-mail
                   </button>
                 </td>
               </tr>

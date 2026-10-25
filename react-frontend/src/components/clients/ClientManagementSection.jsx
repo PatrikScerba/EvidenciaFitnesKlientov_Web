@@ -8,8 +8,13 @@ import MembershipManagementSection from "../memberships/MembershipManagementSect
 import EntryManagementSection from "../entries/EntryManagementSection";
 import AdminClientQrSection from "../qr/AdminClientQrSection";
 import EmployeeClientQrSection from "../qr/EmployeeClientQrSection";
+import SendEmailModal from "../email/SendEmailModal";
 
-export default function ClientManagementSection({ activeView, views,userRole }) {
+export default function ClientManagementSection({
+  activeView,
+  views,
+  userRole,
+}) {
   const [searchResults, setSearchResults] = useState([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
@@ -26,12 +31,14 @@ export default function ClientManagementSection({ activeView, views,userRole }) 
   const [entryClient, setEntryClient] = useState(null);
 
   const [qrClient, setQrClient] = useState(null);
+  const [emailClient, setEmailClient] = useState(null);
 
   useEffect(() => {
     setEditingClient(null);
     setMembershipClient(null);
     setEntryClient(null);
     setQrClient(null);
+    setEmailClient(null);
   }, [activeView]);
 
   function handleEditClient(client) {
@@ -147,6 +154,14 @@ export default function ClientManagementSection({ activeView, views,userRole }) 
     setQrClient(null);
   }
 
+  function handleSendEmail(client) {
+    setEmailClient(client);
+  }
+
+  function closeEmailModal() {
+    setEmailClient(null);
+  }
+
   return (
     <>
       {isSearchView && (
@@ -176,6 +191,7 @@ export default function ClientManagementSection({ activeView, views,userRole }) 
           <ClientList
             onShowQr={handleShowQr}
             onEdit={handleEditClient}
+            onSendEmail={handleSendEmail}
             onManageMembership={handleManageMembership}
             onManageEntry={handleEntryClient}
             onDeleteSuccess={() => {
@@ -221,6 +237,13 @@ export default function ClientManagementSection({ activeView, views,userRole }) 
         <div style={{ marginTop: "20px" }}>
           <EmployeeClientQrSection client={qrClient} onClose={closeQrSection} />
         </div>
+      )}
+      {emailClient && (
+        <SendEmailModal
+          key={emailClient.clientId}
+          client={emailClient}
+          onClose={closeEmailModal}
+        />
       )}
     </>
   );
