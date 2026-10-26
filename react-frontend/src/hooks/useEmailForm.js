@@ -19,7 +19,7 @@ export default function useEmailForm() {
     setAttachments(selectedFiles);
   };
 
-  const handleSubmit = async (clientId) => {
+  const handleSubmit = async (clientIds, sendToAll = false) => {
     setIsSending(true);
     setError("");
 
@@ -27,8 +27,8 @@ export default function useEmailForm() {
       const request = {
         subject: emailData.subject,
         message: emailData.message,
-        sendToAll: false,
-        clientIds: [clientId],
+        sendToAll: sendToAll,
+        clientIds: sendToAll ? [] : Array.isArray(clientIds) ? clientIds : [clientIds],
       };
 
       await sendEmail(request, attachments);
