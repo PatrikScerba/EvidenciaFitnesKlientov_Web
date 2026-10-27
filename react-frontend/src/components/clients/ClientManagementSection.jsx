@@ -31,14 +31,14 @@ export default function ClientManagementSection({
   const [entryClient, setEntryClient] = useState(null);
 
   const [qrClient, setQrClient] = useState(null);
-  const [emailClient, setEmailClient] = useState(null);
+  const [emailModal, setEmailModal] = useState(null);
 
   useEffect(() => {
     setEditingClient(null);
     setMembershipClient(null);
     setEntryClient(null);
     setQrClient(null);
-    setEmailClient(null);
+    setEmailModal(null);
   }, [activeView]);
 
   function handleEditClient(client) {
@@ -155,9 +155,11 @@ export default function ClientManagementSection({
   }
 
   function handleSendEmail(client) {
-    setEmailClient(client);
+    setEmailClient({
+      mode: "single",
+      client: client,
+    });
   }
-
   function closeEmailModal() {
     setEmailClient(null);
   }
@@ -238,10 +240,10 @@ export default function ClientManagementSection({
           <EmployeeClientQrSection client={qrClient} onClose={closeQrSection} />
         </div>
       )}
-      {emailClient && (
+      {emailModal && (
         <SendEmailModal
           key={emailClient.clientId}
-          client={emailClient}
+          client={emailModal.client}
           onClose={closeEmailModal}
         />
       )}
