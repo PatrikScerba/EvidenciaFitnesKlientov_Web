@@ -1,6 +1,6 @@
 import useEmailForm from "../../hooks/useEmailForm";
 
-export default function SendEmailModal({ client, onClose }) {
+export default function SendEmailModal({ client, onClose, sendToAll = false }) {
   const {
     emailData,
     error,
@@ -14,16 +14,20 @@ export default function SendEmailModal({ client, onClose }) {
   const onSubmit = async (event) => {
     event.preventDefault();
 
-    await handleSubmit(client.clientId);
+    await handleSubmit(sendToAll ? [] : client.clientId, sendToAll);
   };
 
   return (
     <div style={{ padding: "20px", border: "1px solid #ccc" }}>
       <h3>Odoslať email klientovi</h3>
 
-      <p>
-        Príjemca: {client.firstName} {client.lastName} ({client.email})
-      </p>
+      {sendToAll ? (
+        <p>Príjemcovia: Všetci klienti</p>
+      ) : (
+        <p>
+          Príjemca: {client.firstName} {client.lastName} ({client.email})
+        </p>
+      )}
 
       <form onSubmit={onSubmit}>
         <div>
@@ -61,8 +65,8 @@ export default function SendEmailModal({ client, onClose }) {
 
         {error && <p style={{ color: "red" }}>{error}</p>}
 
-        <button type="button" disabled={isSending}>
-          Odoslať email
+        <button type="submit" disabled={isSending}>
+          {isSending ? "Odosielam..." : "Odoslať email"}
         </button>
 
         <button type="button" onClick={onClose} disabled={isSending}>

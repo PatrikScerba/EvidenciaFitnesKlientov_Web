@@ -155,13 +155,21 @@ export default function ClientManagementSection({
   }
 
   function handleSendEmail(client) {
-    setEmailClient({
+    setEmailModal({
       mode: "single",
       client: client,
     });
   }
+
+  function handleSendEmailAll() {
+    setEmailModal({
+      mode: "all",
+      client: null,
+    });
+  }
+
   function closeEmailModal() {
-    setEmailClient(null);
+    setEmailModal(null);
   }
 
   return (
@@ -202,6 +210,10 @@ export default function ClientManagementSection({
             }}
             refreshKey={clientListRefresh}
           />
+
+          <button type="button" onClick={handleSendEmailAll}>
+            Odoslať email všetkým klientom
+          </button>
         </div>
       )}
 
@@ -242,8 +254,11 @@ export default function ClientManagementSection({
       )}
       {emailModal && (
         <SendEmailModal
-          key={emailClient.clientId}
+          key={
+            emailModal.mode === "single" ? emailModal.client.clientId : "all"
+          }
           client={emailModal.client}
+          sendToAll={emailModal.mode === "all"}
           onClose={closeEmailModal}
         />
       )}
