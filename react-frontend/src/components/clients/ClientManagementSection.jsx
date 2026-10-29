@@ -32,6 +32,8 @@ export default function ClientManagementSection({
 
   const [qrClient, setQrClient] = useState(null);
   const [emailModal, setEmailModal] = useState(null);
+  const [isEmailSelectionMode, setIsEmailSelectionMode] = useState(false);
+  const [selectedClientIds, setSelectedClientIds] = useState([]);
 
   useEffect(() => {
     setEditingClient(null);
@@ -39,6 +41,8 @@ export default function ClientManagementSection({
     setEntryClient(null);
     setQrClient(null);
     setEmailModal(null);
+    setIsEmailSelectionMode(false);
+    setSelectedClientIds([]);
   }, [activeView]);
 
   function handleEditClient(client) {
@@ -172,6 +176,19 @@ export default function ClientManagementSection({
     setEmailModal(null);
   }
 
+  function handleToggleEmailSelection() {
+    setIsEmailSelectionMode((prev) => !prev);
+    setSelectedClientIds([]);
+  }
+
+  function handleToggleClientSelection(clientId) {
+    setSelectedClientIds((prev) =>
+      prev.includes(clientId)
+        ? prev.filter((id) => id !== clientId)
+        : [...prev, clientId]
+    );
+  }
+
   return (
     <>
       {isSearchView && (
@@ -204,6 +221,9 @@ export default function ClientManagementSection({
             onSendEmail={handleSendEmail}
             onManageMembership={handleManageMembership}
             onManageEntry={handleEntryClient}
+            isEmailSelectionMode={isEmailSelectionMode}
+            selectedClientIds={selectedClientIds}
+            onToggleClientSelection={handleToggleClientSelection}
             onDeleteSuccess={() => {
               closeEditForm();
               refreshClientList();
@@ -216,6 +236,12 @@ export default function ClientManagementSection({
           </button>
         </div>
       )}
+
+      <button type="button" onClick={handleToggleEmailSelection}>
+        {isEmailSelectionMode
+          ? "Zrušiť výber"
+          : "Odoslať email vybraným klientom"}
+      </button>
 
       {showEditForm && (
         <div style={{ marginTop: "20px" }}>

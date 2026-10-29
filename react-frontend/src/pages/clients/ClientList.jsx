@@ -9,6 +9,9 @@ export default function ClientList({
   onManageEntry,
   onShowQr,
   onSendEmail,
+  isEmailSelectionMode,
+  selectedClientIds,
+  onToggleClientSelection,
 }) {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -61,6 +64,7 @@ export default function ClientList({
         <table border="1" cellPadding="8">
           <thead>
             <tr>
+              {isEmailSelectionMode && <th>Vybrať</th>}
               <th>ID</th>
               <th>Meno</th>
               <th>Priezvisko</th>
@@ -74,6 +78,16 @@ export default function ClientList({
           <tbody>
             {clients.map((client) => (
               <tr key={client.clientId}>
+                {isEmailSelectionMode && (
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={selectedClientIds.includes(client.clientId)}
+                      onChange={() => onToggleClientSelection(client.clientId)}
+                    />
+                  </td>
+                )}
+
                 <td>{client.clientId}</td>
                 <td>{client.firstName}</td>
                 <td>{client.lastName}</td>
