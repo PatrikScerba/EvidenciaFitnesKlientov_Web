@@ -1,6 +1,11 @@
 import useEmailForm from "../../hooks/useEmailForm";
 
-export default function SendEmailModal({ client, onClose, sendToAll = false }) {
+export default function SendEmailModal({
+  client,
+  onClose,
+  sendToAll = false,
+  selectedClientIds = [],
+}) {
   const {
     emailData,
     error,
@@ -11,10 +16,18 @@ export default function SendEmailModal({ client, onClose, sendToAll = false }) {
     handleSubmit,
   } = useEmailForm();
 
+  const isSelectedMode = selectedClientIds.length > 0;
+
   const onSubmit = async (event) => {
     event.preventDefault();
 
-    await handleSubmit(sendToAll ? [] : client.clientId, sendToAll);
+    const clientIds = sendToAll
+      ? []
+      : isSelectedMode
+        ? selectedClientIds
+        : client.clientId;
+
+    await handleSubmit(clientId, sendToAll);
   };
 
   return (
@@ -23,6 +36,8 @@ export default function SendEmailModal({ client, onClose, sendToAll = false }) {
 
       {sendToAll ? (
         <p>Príjemcovia: Všetci klienti</p>
+      ) : isSelectedMode ? (
+        <p>Príjemcovia: {selectedClientIds.length} vybraných klientov</p>
       ) : (
         <p>
           Príjemca: {client.firstName} {client.lastName} ({client.email})
