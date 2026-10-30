@@ -189,6 +189,16 @@ export default function ClientManagementSection({
     );
   }
 
+  function handleContinueSelectedEmail() {
+    if (selectedClientIds.length === 0) return;
+
+    setEmailModal({
+      mode: "selected",
+      client: null,
+      clientIds: [...selectedClientIds],
+    });
+  }
+
   return (
     <>
       {isSearchView && (
@@ -243,6 +253,20 @@ export default function ClientManagementSection({
           : "Odoslať email vybraným klientom"}
       </button>
 
+      {isEmailSelectionMode && (
+        <p>Počet vybraných klientov: {selectedClientIds.length}</p>
+      )}
+
+      {isEmailSelectionMode && (
+        <button
+          type="button"
+          onClick={handleContinueSelectedEmail}
+          disabled={selectedClientIds.length === 0}
+        >
+          Pokračovať na odoslanie
+        </button>
+      )}
+
       {showEditForm && (
         <div style={{ marginTop: "20px" }}>
           <ClientEdit
@@ -281,10 +305,15 @@ export default function ClientManagementSection({
       {emailModal && (
         <SendEmailModal
           key={
-            emailModal.mode === "single" ? emailModal.client.clientId : "all"
+            emailModal.mode === "single"
+              ? emailModal.client.clientId
+              : emailModal.mode
           }
           client={emailModal.client}
           sendToAll={emailModal.mode === "all"}
+          selectedClientIds={
+            emailModal.mode === "selected" ? emailModal.clientIds : []
+          }
           onClose={closeEmailModal}
         />
       )}
