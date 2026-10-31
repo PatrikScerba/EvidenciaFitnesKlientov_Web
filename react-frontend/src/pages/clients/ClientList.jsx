@@ -83,7 +83,7 @@ export default function ClientList({
                     <input
                       type="checkbox"
                       checked={selectedClientIds.includes(client.clientId)}
-                      onChange={() => onToggleClientSelection(client.clientId)}
+                      onChange={() => onToggleClientSelection(client)}
                     />
                   </td>
                 )}

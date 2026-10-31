@@ -33,7 +33,9 @@ export default function ClientManagementSection({
   const [qrClient, setQrClient] = useState(null);
   const [emailModal, setEmailModal] = useState(null);
   const [isEmailSelectionMode, setIsEmailSelectionMode] = useState(false);
-  const [selectedClientIds, setSelectedClientIds] = useState([]);
+  const [selectedClients, setSelectedClients] = useState([]);
+
+  const selectedClientIds = selectedClients.map((client) => client.clientId);
 
   useEffect(() => {
     setEditingClient(null);
@@ -42,7 +44,7 @@ export default function ClientManagementSection({
     setQrClient(null);
     setEmailModal(null);
     setIsEmailSelectionMode(false);
-    setSelectedClientIds([]);
+    setSelectedClients([]);
   }, [activeView]);
 
   function handleEditClient(client) {
@@ -178,14 +180,14 @@ export default function ClientManagementSection({
 
   function handleToggleEmailSelection() {
     setIsEmailSelectionMode((prev) => !prev);
-    setSelectedClientIds([]);
+    setSelectedClients([]);
   }
 
-  function handleToggleClientSelection(clientId) {
-    setSelectedClientIds((prev) =>
-      prev.includes(clientId)
-        ? prev.filter((id) => id !== clientId)
-        : [...prev, clientId]
+  function handleToggleClientSelection(client) {
+    setSelectedClients((prev) =>
+      prev.some((c) => c.clientId === client.clientId)
+        ? prev.filter((c) => c.clientId !== client.clientId)
+        : [...prev, client]
     );
   }
 
@@ -195,7 +197,6 @@ export default function ClientManagementSection({
     setEmailModal({
       mode: "selected",
       client: null,
-      clientIds: [...selectedClientIds],
     });
   }
 
@@ -302,6 +303,7 @@ export default function ClientManagementSection({
           <EmployeeClientQrSection client={qrClient} onClose={closeQrSection} />
         </div>
       )}
+
       {emailModal && (
         <SendEmailModal
           key={
@@ -309,10 +311,14 @@ export default function ClientManagementSection({
               ? emailModal.client.clientId
               : emailModal.mode
           }
+          mode={emailModal.mode}
           client={emailModal.client}
           sendToAll={emailModal.mode === "all"}
           selectedClientIds={
-            emailModal.mode === "selected" ? emailModal.clientIds : []
+            emailModal.mode === "selected" ? selectedClientIds : []
+          }
+          selectedClients={
+            emailModal.mode === "selected" ? selectedClients : []
           }
           onClose={closeEmailModal}
         />

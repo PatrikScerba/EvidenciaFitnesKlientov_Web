@@ -3,8 +3,10 @@ import useEmailForm from "../../hooks/useEmailForm";
 export default function SendEmailModal({
   client,
   onClose,
+  mode = "single",
   sendToAll = false,
   selectedClientIds = [],
+  selectedClients = [],
 }) {
   const {
     emailData,
@@ -16,10 +18,12 @@ export default function SendEmailModal({
     handleSubmit,
   } = useEmailForm();
 
-  const isSelectedMode = selectedClientIds.length > 0;
+  const isSelectedMode = mode === "selected";
 
   const onSubmit = async (event) => {
     event.preventDefault();
+
+    if (isSelectedMode && selectedClientIds.length === 0) return;
 
     const clientIds = sendToAll
       ? []
@@ -27,7 +31,7 @@ export default function SendEmailModal({
         ? selectedClientIds
         : client.clientId;
 
-    await handleSubmit(clientId, sendToAll);
+    await handleSubmit(clientIds, sendToAll);
   };
 
   return (
@@ -37,13 +41,22 @@ export default function SendEmailModal({
       {sendToAll ? (
         <p>Príjemcovia: Všetci klienti</p>
       ) : isSelectedMode ? (
-        <p>Príjemcovia: {selectedClientIds.length} vybraných klientov</p>
+        <div>
+          <p>Príjemcovia: {selectedClients.length} vybraných klientov</p>
+
+          <ul>
+            {selectedClients.map((client) => (
+              <li key={client.clientId}>
+                {client.firstName} {client.lastName} ({client.email})
+              </li>
+            ))}
+          </ul>
+        </div>
       ) : (
         <p>
           Príjemca: {client.firstName} {client.lastName} ({client.email})
         </p>
       )}
-
       <form onSubmit={onSubmit}>
         <div>
           <label>Predmet</label>
@@ -80,7 +93,12 @@ export default function SendEmailModal({
 
         {error && <p style={{ color: "red" }}>{error}</p>}
 
-        <button type="submit" disabled={isSending}>
+        <button
+          type="submit"
+          disabled={
+            isSending || (isSelectedMode && selectedClientIds.length === 0)
+          }
+        >
           {isSending ? "Odosielam..." : "Odoslať email"}
         </button>
 
