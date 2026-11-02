@@ -168,6 +168,9 @@ export default function ClientManagementSection({
   }
 
   function handleSendEmailAll() {
+    setIsEmailSelectionMode(false);
+    setSelectedClients([]);
+
     setEmailModal({
       mode: "all",
       client: null,
@@ -181,6 +184,7 @@ export default function ClientManagementSection({
   function handleToggleEmailSelection() {
     setIsEmailSelectionMode((prev) => !prev);
     setSelectedClients([]);
+    setEmailModal(null);
   }
 
   function handleToggleClientSelection(client) {
@@ -313,7 +317,6 @@ export default function ClientManagementSection({
           }
           mode={emailModal.mode}
           client={emailModal.client}
-          sendToAll={emailModal.mode === "all"}
           selectedClientIds={
             emailModal.mode === "selected" ? selectedClientIds : []
           }

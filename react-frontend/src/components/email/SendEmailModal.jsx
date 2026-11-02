@@ -25,8 +25,11 @@ export default function SendEmailModal({
   const [recipientsError, setRecipientsError] = useState("");
   const [showAllRecipients, setShowAllRecipients] = useState(false);
 
+  const isSelectedMode = mode === "selected";
+  const isAllMode = mode === "all";
+
   useEffect(() => {
-    if (!sendToAll) return;
+    if (!isAllMode) return;
 
     let cancelled = false;
 
@@ -58,29 +61,27 @@ export default function SendEmailModal({
     return () => {
       cancelled = true;
     };
-  }, [sendToAll]);
-
-  const isSelectedMode = mode === "selected";
+  }, [isAllMode]);
 
   const onSubmit = async (event) => {
     event.preventDefault();
 
     if (isSelectedMode && selectedClientIds.length === 0) return;
 
-    const clientIds = sendToAll
+    const clientIds = isAllMode
       ? []
       : isSelectedMode
         ? selectedClientIds
         : client.clientId;
 
-    await handleSubmit(clientIds, sendToAll);
+    await handleSubmit(clientIds, isAllMode);
   };
 
   return (
     <div style={{ padding: "20px", border: "1px solid #ccc" }}>
       <h3>Odoslať email klientovi</h3>
 
-      {sendToAll ? (
+      {isAllMode ? (
         <div>
           <p>Príjemcovia: Všetci klienti</p>
           {recipientsLoading && <p>Načítavam zoznam klientov...</p>}
