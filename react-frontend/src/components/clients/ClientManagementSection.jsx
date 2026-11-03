@@ -222,6 +222,10 @@ export default function ClientManagementSection({
                   onManageMembership={handleManageMembership}
                   onManageEntry={handleEntryClient}
                   onShowQr={handleShowQr}
+                  onSendEmail={handleSendEmail}
+                  isEmailSelectionMode={isEmailSelectionMode}
+                  selectedClientIds={selectedClientIds}
+                  onToggleClientSelection={handleToggleClientSelection}
                 />
               ))}
           </div>

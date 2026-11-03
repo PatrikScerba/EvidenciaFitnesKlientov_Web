@@ -5,11 +5,16 @@ export default function ClientResultsTable({
   onManageMembership,
   onManageEntry,
   onShowQr,
+  onSendEmail,
+  isEmailSelectionMode,
+  selectedClientIds,
+  onToggleClientSelection,
 }) {
   return (
     <table border="1" cellPadding="8">
       <thead>
         <tr>
+          {isEmailSelectionMode && <th>Vybrať</th>}
           <th>ID</th>
           <th>Meno</th>
           <th>Priezvisko</th>
@@ -24,6 +29,16 @@ export default function ClientResultsTable({
       <tbody>
         {clients.map((client) => (
           <tr key={client.clientId}>
+            {isEmailSelectionMode && (
+              <td>
+                <input
+                  type="checkbox"
+                  checked={selectedClientIds.includes(client.clientId)}
+                  onChange={() => onToggleClientSelection(client)}
+                />
+              </td>
+            )}
+
             <td>{client.clientId}</td>
             <td>{client.firstName}</td>
             <td>{client.lastName}</td>
@@ -60,6 +75,13 @@ export default function ClientResultsTable({
                 onClick={() => onShowQr(client)}
               >
                 QR kód
+              </button>
+              <button
+                type="button"
+                style={{ marginLeft: "10px" }}
+                onClick={() => onSendEmail(client)}
+              >
+                E-mail
               </button>
             </td>
           </tr>
