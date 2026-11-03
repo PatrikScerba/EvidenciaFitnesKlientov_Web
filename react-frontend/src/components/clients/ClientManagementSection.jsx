@@ -24,6 +24,8 @@ export default function ClientManagementSection({
 
   const isSearchView = activeView === views.CLIENT_SEARCH;
   const isListView = activeView === views.CLIENT_LIST;
+  const showEmailSelectionControls =
+    isListView || (isSearchView && hasSearched && searchResults.length > 0);
   const isAdmin = userRole === "ADMIN";
   const isEmployee = userRole === "EMPLOYEE";
   const showEditForm = editingClient && (isSearchView || isListView);
@@ -256,24 +258,28 @@ export default function ClientManagementSection({
         </div>
       )}
 
-      <button type="button" onClick={handleToggleEmailSelection}>
-        {isEmailSelectionMode
-          ? "Zrušiť výber"
-          : "Odoslať email vybraným klientom"}
-      </button>
+      {showEmailSelectionControls && (
+        <div style={{ marginTop: "12px" }}>
+          <button type="button" onClick={handleToggleEmailSelection}>
+            {isEmailSelectionMode
+              ? "Zrušiť výber"
+              : "Odoslať email vybraným klientom"}
+          </button>
 
-      {isEmailSelectionMode && (
-        <p>Počet vybraných klientov: {selectedClientIds.length}</p>
-      )}
+          {isEmailSelectionMode && (
+            <>
+              <p>Počet vybraných klientov: {selectedClientIds.length}</p>
 
-      {isEmailSelectionMode && (
-        <button
-          type="button"
-          onClick={handleContinueSelectedEmail}
-          disabled={selectedClientIds.length === 0}
-        >
-          Pokračovať na odoslanie
-        </button>
+              <button
+                type="button"
+                onClick={handleContinueSelectedEmail}
+                disabled={selectedClientIds.length === 0}
+              >
+                Pokračovať na odoslanie
+              </button>
+            </>
+          )}
+        </div>
       )}
 
       {showEditForm && (
