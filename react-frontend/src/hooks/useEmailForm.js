@@ -28,10 +28,16 @@ export default function useEmailForm() {
         subject: emailData.subject,
         message: emailData.message,
         sendToAll: sendToAll,
-        clientIds: sendToAll ? [] : Array.isArray(clientIds) ? clientIds : [clientIds],
+        clientIds: sendToAll
+          ? []
+          : Array.isArray(clientIds)
+            ? clientIds
+            : [clientIds],
       };
 
       await sendEmail(request, attachments);
+
+      return true;
     } catch (err) {
       setError(err.message || "Email sa nepodarilo odoslať.");
     } finally {

@@ -183,6 +183,12 @@ export default function ClientManagementSection({
     setEmailModal(null);
   }
 
+  function handleEmailSuccess() {
+    setEmailModal(null);
+    setSelectedClients([]);
+    setIsEmailSelectionMode(false);
+  }
+
   function handleToggleEmailSelection() {
     setIsEmailSelectionMode((prev) => !prev);
     setSelectedClients([]);
@@ -334,6 +340,7 @@ export default function ClientManagementSection({
             emailModal.mode === "selected" ? selectedClients : []
           }
           onClose={closeEmailModal}
+          onSuccess={handleEmailSuccess}
         />
       )}
     </>

@@ -5,6 +5,7 @@ import { getAllClients } from "../../api/clientApi";
 export default function SendEmailModal({
   client,
   onClose,
+  onSuccess,
   mode = "single",
   sendToAll = false,
   selectedClientIds = [],
@@ -74,7 +75,11 @@ export default function SendEmailModal({
         ? selectedClientIds
         : client.clientId;
 
-    await handleSubmit(clientIds, isAllMode);
+    const success = await handleSubmit(clientIds, isAllMode);
+
+    if (success) {
+      onSuccess?.();
+    }
   };
 
   return (
