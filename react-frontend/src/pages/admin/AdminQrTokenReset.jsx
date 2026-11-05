@@ -52,6 +52,8 @@ export default function AdminQrTokenReset() {
       "Naozaj chceš resetovať QR token klienta? Pôvodný QR token prestane byť platný."
     );
 
+    if (!confirmed) return;
+
     setError("");
     setMessage("");
 
@@ -65,6 +67,7 @@ export default function AdminQrTokenReset() {
 
       setMessage(response.message || "QR token bol úspešne resetovaný.");
       setSecurityAnswer("");
+      setQuestionLoaded(false);
     } catch (err) {
       setError(err.message || "Nepodarilo sa resetovať QR token.");
     } finally {
