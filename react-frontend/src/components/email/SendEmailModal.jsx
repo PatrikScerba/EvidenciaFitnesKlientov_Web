@@ -1,5 +1,5 @@
 import useEmailForm from "../../hooks/useEmailForm";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getAllClients } from "../../api/clientApi";
 
 export default function SendEmailModal({
@@ -26,8 +26,18 @@ export default function SendEmailModal({
   const [recipientsError, setRecipientsError] = useState("");
   const [showAllRecipients, setShowAllRecipients] = useState(false);
 
-  const isSelectedMode = mode === "selected";
-  const isAllMode = mode === "all";
+  const sendingRef = useRef(false);
+
+  const effectiveMode =
+    mode === "selected"
+      ? "selected"
+      : mode === "all" || sendToAll
+        ? "all"
+        : "single";
+
+  const isSelectedMode = effectiveMode === "selected";
+  const isAllMode = effectiveMode === "all";
+  const isSingleMode = effectiveMode === "single";
 
   useEffect(() => {
     if (!isAllMode) return;
@@ -39,7 +49,13 @@ export default function SendEmailModal({
       setRecipientsError("");
 
       try {
-        const clients = await getAllClients();
+        const response = await getAllClients();
+
+        const clients = Array.isArray(response) ? response : response?.content;
+
+        if (!Array.isArray(clients)) {
+          throw new Error("Neplatný formát zoznamu klientov.");
+        }
 
         if (!cancelled) {
           setAllRecipients(clients);
@@ -64,35 +80,67 @@ export default function SendEmailModal({
     };
   }, [isAllMode]);
 
+  const sendEmailOnce = async (clientIds, sendToAll) => {
+    if (sendingRef.current) return;
+
+    sendingRef.current = true;
+
+    try {
+      const success = await handleSubmit(clientIds, sendToAll);
+
+      if (success) {
+        onSuccess?.();
+      }
+    } finally {
+      sendingRef.current = false;
+    }
+  };
+
   const onSubmit = async (event) => {
     event.preventDefault();
 
-    if (isSelectedMode && selectedClientIds.length === 0) return;
+    if (isSending || sendingRef.current) return;
+
+    if (isSelectedMode && selectedClientIds.length === 0) {
+      return;
+    }
+
+    if (
+      isAllMode &&
+      (recipientsLoading || recipientsError || allRecipients.length === 0)
+    ) {
+      return;
+    }
+
+    if (isSingleMode && !client?.clientId) {
+      return;
+    }
 
     const clientIds = isAllMode
       ? []
       : isSelectedMode
-        ? selectedClientIds
+        ? [...selectedClientIds]
         : client.clientId;
 
-    const success = await handleSubmit(clientIds, isAllMode);
-
-    if (success) {
-      onSuccess?.();
-    }
+    await sendEmailOnce(clientIds, isAllMode);
   };
 
   return (
-    <div style={{ padding: "20px", border: "1px solid #ccc" }}>
+    <div
+      style={{
+        padding: "20px",
+        border: "1px solid #ccc",
+      }}
+    >
       <h3>Odoslať email klientovi</h3>
 
       {isAllMode ? (
         <div>
           <p>Príjemcovia: Všetci klienti</p>
+
           {recipientsLoading && <p>Načítavam zoznam klientov...</p>}
-          {recipientsError && (
-            <p style={{ color: "blue" }}>{recipientsError}</p>
-          )}
+
+          {recipientsError && <p style={{ color: "red" }}>{recipientsError}</p>}
 
           {!recipientsLoading && !recipientsError && (
             <div>
@@ -116,9 +164,10 @@ export default function SendEmailModal({
                     overflowY: "auto",
                   }}
                 >
-                  {allRecipients.map((client) => (
-                    <li key={client.clientId}>
-                      {client.firstName} {client.lastName} ({client.email})
+                  {allRecipients.map((recipient) => (
+                    <li key={recipient.clientId}>
+                      {recipient.firstName} {recipient.lastName} (
+                      {recipient.email})
                     </li>
                   ))}
                 </ul>
@@ -127,25 +176,27 @@ export default function SendEmailModal({
           )}
         </div>
       ) : isSelectedMode ? (
+        /* VYBRANÍ KLIENTI */
         <div>
-          <p>Príjemcovia: {selectedClients.length} vybraných klientov</p>
+          <p>Príjemcovia: {selectedClientIds.length} vybraných klientov</p>
 
           <ul>
-            {selectedClients.map((client) => (
-              <li key={client.clientId}>
-                {client.firstName} {client.lastName} ({client.email})
+            {selectedClients.map((recipient) => (
+              <li key={recipient.clientId}>
+                {recipient.firstName} {recipient.lastName} ({recipient.email})
               </li>
             ))}
           </ul>
         </div>
       ) : (
         <p>
-          Príjemca: {client.firstName} {client.lastName} ({client.email})
+          Príjemca: {client?.firstName} {client?.lastName} ({client?.email})
         </p>
       )}
       <form onSubmit={onSubmit}>
         <div>
           <label>Predmet</label>
+
           <input
             type="text"
             name="subject"
@@ -158,6 +209,7 @@ export default function SendEmailModal({
 
         <div>
           <label>Správa</label>
+
           <textarea
             name="message"
             value={emailData.message}
@@ -169,6 +221,7 @@ export default function SendEmailModal({
 
         <div>
           <label>Prílohy</label>
+
           <input
             type="file"
             multiple
@@ -182,7 +235,13 @@ export default function SendEmailModal({
         <button
           type="submit"
           disabled={
-            isSending || (isSelectedMode && selectedClientIds.length === 0)
+            isSending ||
+            (isSingleMode && !client?.clientId) ||
+            (isSelectedMode && selectedClientIds.length === 0) ||
+            (isAllMode &&
+              (recipientsLoading ||
+                !!recipientsError ||
+                allRecipients.length === 0))
           }
         >
           {isSending ? "Odosielam..." : "Odoslať email"}
