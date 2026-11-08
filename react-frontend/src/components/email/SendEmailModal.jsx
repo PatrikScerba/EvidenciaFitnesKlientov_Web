@@ -25,6 +25,7 @@ export default function SendEmailModal({
   const [recipientsLoading, setRecipientsLoading] = useState(false);
   const [recipientsError, setRecipientsError] = useState("");
   const [showAllRecipients, setShowAllRecipients] = useState(false);
+  const [confirmation, setConfirmation] = useState(null);
 
   const sendingRef = useRef(false);
 
@@ -99,7 +100,9 @@ export default function SendEmailModal({
   const onSubmit = async (event) => {
     event.preventDefault();
 
-    if (isSending || sendingRef.current) return;
+    if (isSending || sendingRef.current || confirmation) {
+      return;
+    }
 
     if (isSelectedMode && selectedClientIds.length === 0) {
       return;
@@ -122,7 +125,35 @@ export default function SendEmailModal({
         ? [...selectedClientIds]
         : client.clientId;
 
-    await sendEmailOnce(clientIds, isAllMode);
+    if (isSelectedMode || isAllMode) {
+      setConfirmation({
+        clientIds,
+        sendToAll: isAllMode,
+        count: isAllMode ? allRecipients.length : selectedClientIds.length,
+      });
+
+      return;
+    }
+
+    await sendEmailOnce(clientIds, false);
+  };
+
+  const handleConfirmSend = async () => {
+    if (!confirmation || isSending || sendingRef.current) {
+      return;
+    }
+
+    const { clientIds, sendToAll } = confirmation;
+
+    setConfirmation(null);
+
+    await sendEmailOnce(clientIds, sendToAll);
+  };
+
+  const handleCancelConfirmation = () => {
+    if (isSending || sendingRef.current) return;
+
+    setConfirmation(null);
   };
 
   return (
@@ -236,6 +267,7 @@ export default function SendEmailModal({
           type="submit"
           disabled={
             isSending ||
+            confirmation !== null ||
             (isSingleMode && !client?.clientId) ||
             (isSelectedMode && selectedClientIds.length === 0) ||
             (isAllMode &&
@@ -247,10 +279,87 @@ export default function SendEmailModal({
           {isSending ? "Odosielam..." : "Odoslať email"}
         </button>
 
-        <button type="button" onClick={onClose} disabled={isSending}>
+        <button
+          type="button"
+          onClick={onClose}
+          disabled={isSending || confirmation !== null}
+        >
           Zrušiť
         </button>
       </form>
+
+      {confirmation && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="confirm-email-title"
+            style={{
+              backgroundColor: "#252525",
+              color: "#fff",
+              padding: "25px",
+              border: "1px solid #666",
+              borderRadius: "8px",
+              width: "90%",
+              maxWidth: "450px",
+              boxShadow: "0 8px 30px rgba(0,0,0,0.4)",
+            }}
+          >
+            <h3 id="confirm-email-title">Potvrdenie odoslania e-mailu</h3>
+
+            {confirmation.sendToAll ? (
+              <>
+                <p>Naozaj chcete odoslať e-mail všetkým klientom?</p>
+
+                <p>
+                  Počet evidovaných klientov v náhľade:{" "}
+                  <strong>{confirmation.count}</strong>
+                </p>
+              </>
+            ) : (
+              <p>
+                Naozaj chcete odoslať e-mail{" "}
+                <strong>{confirmation.count}</strong> vybraným klientom?
+              </p>
+            )}
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "10px",
+                marginTop: "25px",
+              }}
+            >
+              <button
+                type="button"
+                onClick={handleCancelConfirmation}
+                disabled={isSending}
+              >
+                Zrušiť
+              </button>
+
+              <button
+                type="button"
+                onClick={handleConfirmSend}
+                disabled={isSending}
+              >
+                Potvrdiť odoslanie
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
