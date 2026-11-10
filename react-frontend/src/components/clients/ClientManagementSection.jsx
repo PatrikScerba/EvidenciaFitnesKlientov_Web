@@ -85,6 +85,8 @@ export default function ClientManagementSection({
       closeEditForm();
       closeMembershipForm();
       closeEntryForm();
+      setSelectedClients([]);
+      setIsEmailSelectionMode(false);
 
       const data = await searchClients(filters);
       setSearchResults(data);
@@ -102,6 +104,10 @@ export default function ClientManagementSection({
 
     try {
       await deleteClient(id);
+
+      setSelectedClients((prev) =>
+          prev.filter((client) => client.clientId !== id)
+      );
 
       setSearchResults((prev) =>
         prev.filter((client) => client.clientId !== id)
