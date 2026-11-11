@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import ClientList from "../../pages/clients/ClientList";
 import ClientSearch from "../../pages/clients/ClientSearch";
 import ClientEdit from "../../pages/clients/ClientEdit";
@@ -34,12 +34,16 @@ export default function ClientManagementSection({
 
   const [qrClient, setQrClient] = useState(null);
   const [emailModal, setEmailModal] = useState(null);
+  const [emailSending, setEmailSending] = useState(false);
+  const emailSendingRef = useRef(false);
   const [isEmailSelectionMode, setIsEmailSelectionMode] = useState(false);
   const [selectedClients, setSelectedClients] = useState([]);
 
   const selectedClientIds = selectedClients.map((client) => client.clientId);
 
   useEffect(() => {
+    if (emailSendingRef.current) return;
+
     setEditingClient(null);
     setMembershipClient(null);
     setEntryClient(null);
@@ -106,7 +110,7 @@ export default function ClientManagementSection({
       await deleteClient(id);
 
       setSelectedClients((prev) =>
-          prev.filter((client) => client.clientId !== id)
+        prev.filter((client) => client.clientId !== id)
       );
 
       setSearchResults((prev) =>
@@ -169,6 +173,8 @@ export default function ClientManagementSection({
   }
 
   function handleSendEmail(client) {
+    if (emailSendingRef.current) return;
+
     setEmailModal({
       mode: "single",
       client: client,
@@ -176,6 +182,8 @@ export default function ClientManagementSection({
   }
 
   function handleSendEmailAll() {
+    if (emailSendingRef.current) return;
+
     setIsEmailSelectionMode(false);
     setSelectedClients([]);
 
@@ -183,6 +191,11 @@ export default function ClientManagementSection({
       mode: "all",
       client: null,
     });
+  }
+
+  function handleEmailSendingChange(sending) {
+    emailSendingRef.current = sending;
+    setEmailSending(sending);
   }
 
   function closeEmailModal() {
@@ -196,6 +209,8 @@ export default function ClientManagementSection({
   }
 
   function handleToggleEmailSelection() {
+    if (emailSendingRef.current) return;
+
     setIsEmailSelectionMode((prev) => !prev);
     setSelectedClients([]);
     setEmailModal(null);
@@ -210,6 +225,8 @@ export default function ClientManagementSection({
   }
 
   function handleContinueSelectedEmail() {
+    if (emailSendingRef.current) return;
+
     if (selectedClientIds.length === 0) return;
 
     setEmailModal({
@@ -264,7 +281,11 @@ export default function ClientManagementSection({
             refreshKey={clientListRefresh}
           />
 
-          <button type="button" onClick={handleSendEmailAll}>
+          <button
+            type="button"
+            onClick={handleSendEmailAll}
+            disabled={emailSending}
+          >
             Odoslať email všetkým klientom
           </button>
         </div>
@@ -272,7 +293,11 @@ export default function ClientManagementSection({
 
       {showEmailSelectionControls && (
         <div style={{ marginTop: "12px" }}>
-          <button type="button" onClick={handleToggleEmailSelection}>
+          <button
+            type="button"
+            onClick={handleToggleEmailSelection}
+            disabled={emailSending}
+          >
             {isEmailSelectionMode
               ? "Zrušiť výber"
               : "Odoslať email vybraným klientom"}
@@ -285,7 +310,7 @@ export default function ClientManagementSection({
               <button
                 type="button"
                 onClick={handleContinueSelectedEmail}
-                disabled={selectedClientIds.length === 0}
+                disabled={emailSending || selectedClientIds.length === 0}
               >
                 Pokračovať na odoslanie
               </button>
@@ -345,6 +370,7 @@ export default function ClientManagementSection({
           selectedClients={
             emailModal.mode === "selected" ? selectedClients : []
           }
+          onSendingChange={handleEmailSendingChange}
           onClose={closeEmailModal}
           onSuccess={handleEmailSuccess}
         />

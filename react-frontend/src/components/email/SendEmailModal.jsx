@@ -10,6 +10,7 @@ export default function SendEmailModal({
   sendToAll = false,
   selectedClientIds = [],
   selectedClients = [],
+  onSendingChange,
 }) {
   const {
     emailData,
@@ -85,6 +86,7 @@ export default function SendEmailModal({
     if (sendingRef.current) return;
 
     sendingRef.current = true;
+    onSendingChange?.(true);
 
     try {
       const success = await handleSubmit(clientIds, sendToAll);
@@ -93,6 +95,7 @@ export default function SendEmailModal({
         onSuccess?.();
       }
     } finally {
+      onSendingChange?.(false);
       sendingRef.current = false;
     }
   };
@@ -207,7 +210,6 @@ export default function SendEmailModal({
           )}
         </div>
       ) : isSelectedMode ? (
-        /* VYBRANÍ KLIENTI */
         <div>
           <p>Príjemcovia: {selectedClientIds.length} vybraných klientov</p>
 
