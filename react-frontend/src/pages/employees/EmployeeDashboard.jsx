@@ -8,8 +8,10 @@ import QrTurnstileScanSection from "../../components/entries/QrTurnstileScanSect
 
 export default function EmployeeDashboard({ user }) {
   const [activeView, setActiveView] = useState(null);
+    const [emailSending, setEmailSending] = useState(false);
 
   function toggleView(viewName) {
+      if (emailSending) return;
     setActiveView((prev) => (prev === viewName ? null : viewName));
   }
 
@@ -70,6 +72,7 @@ export default function EmployeeDashboard({ user }) {
         activeView={activeView}
         views={EMPLOYEE_VIEWS}
         userRole={user?.role}
+        onEmailSendingChange={setEmailSending}
       />
 
       {activeView === EMPLOYEE_VIEWS.CLIENT_REGISTER && (

@@ -14,6 +14,7 @@ export default function ClientManagementSection({
   activeView,
   views,
   userRole,
+  onEmailSendingChange,
 }) {
   const [searchResults, setSearchResults] = useState([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
@@ -196,6 +197,7 @@ export default function ClientManagementSection({
   function handleEmailSendingChange(sending) {
     emailSendingRef.current = sending;
     setEmailSending(sending);
+    onEmailSendingChange?.(sending);
   }
 
   function closeEmailModal() {
