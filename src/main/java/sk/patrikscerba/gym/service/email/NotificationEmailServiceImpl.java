@@ -75,16 +75,39 @@ public class NotificationEmailServiceImpl implements NotificationEmailService {
         }
 
         // Pre každého príjemcu pripraví individuálnu e-mailovú požiadavku
-        // a deleguje jej odoslanie na EmailService.
+        // a pokúsi sa ju odoslať prostredníctvom EmailService.
+        // Eviduje úspešne a neúspešné pokusy a pri chybe pokračuje ďalším klientom.
+        int successful = 0;
+        int failed = 0;
+
         for (ClientEntity client : clients) {
-            EmailRequest emailRequest = new EmailRequest();
+            try {
+                EmailRequest emailRequest = new EmailRequest();
 
-            emailRequest.setTo(client.getEmail());
-            emailRequest.setRecipientName(client.getFirstName());
-            emailRequest.setSubject(request.getSubject());
-            emailRequest.setMessage(request.getMessage());
+                emailRequest.setTo(client.getEmail());
+                emailRequest.setRecipientName(client.getFirstName());
+                emailRequest.setSubject(request.getSubject());
+                emailRequest.setMessage(request.getMessage());
 
-            emailService.sendEmail(emailRequest, attachments);
+                emailService.sendEmail(emailRequest, attachments);
+                successful++;
+
+            } catch (RuntimeException e) {
+                failed++;
+                System.err.println(
+                        "Odosielanie emailu zlyhalo pre klienta ID: "
+                                + client.getClientId()
+                                + " - " + e.getMessage()
+                );
+            }
+        }
+
+        if (failed > 0) {
+            throw new BusinessException(
+                    "Odosielanie bolo dokončené s chybami. Úspešné pokusy: "
+                            + successful + ", neúspešné pokusy: " + failed
+            );
         }
     }
 }
+
