@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sk.patrikscerba.gym.dto.email.EmailRequest;
 import sk.patrikscerba.gym.dto.email.EmailSendRequest;
+import sk.patrikscerba.gym.dto.email.EmailSendResult;
 import sk.patrikscerba.gym.entity.ClientEntity;
 import sk.patrikscerba.gym.exception.BusinessException;
 import sk.patrikscerba.gym.repository.ClientRepository;
@@ -30,7 +31,7 @@ public class NotificationEmailServiceImpl implements NotificationEmailService {
 
     // Spracuje požiadavku na odoslanie e-mailu vybraným alebo všetkým klientom.
     @Override
-    public void sendEmail(EmailSendRequest request, List<MultipartFile> attachments) {
+    public EmailSendResult sendEmail(EmailSendRequest request, List<MultipartFile> attachments) {
 
         // Zabráni kombinácii hromadného odoslania so zoznamom konkrétnych klientov.
         if (request.isSendToAll()
@@ -108,6 +109,7 @@ public class NotificationEmailServiceImpl implements NotificationEmailService {
                             + successful + ", neúspešné pokusy: " + failed
             );
         }
+        return new EmailSendResult(clients.size(), successful, failed);
     }
 }
 

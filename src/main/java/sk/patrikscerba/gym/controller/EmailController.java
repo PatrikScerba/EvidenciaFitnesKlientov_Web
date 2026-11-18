@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import sk.patrikscerba.gym.dto.email.EmailSendRequest;
+import sk.patrikscerba.gym.dto.email.EmailSendResult;
 import sk.patrikscerba.gym.service.email.NotificationEmailService;
 
 import java.util.List;
@@ -36,6 +37,7 @@ public class EmailController {
             @RequestPart(value = "attachments", required = false)
             List<MultipartFile> attachments
     ) {
+        EmailSendResult result =
         notificationEmailService.sendEmail(request, attachments);
 
         return ResponseEntity.ok(
