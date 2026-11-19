@@ -89,10 +89,10 @@ export default function SendEmailModal({
     onSendingChange?.(true);
 
     try {
-      const success = await handleSubmit(clientIds, sendToAll);
+      const result = await handleSubmit(clientIds, sendToAll);
 
-      if (success) {
-        onSuccess?.();
+      if (result) {
+        onSuccess?.(result);
       }
     } finally {
       onSendingChange?.(false);

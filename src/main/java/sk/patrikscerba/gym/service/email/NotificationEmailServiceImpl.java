@@ -102,13 +102,6 @@ public class NotificationEmailServiceImpl implements NotificationEmailService {
                 );
             }
         }
-
-        if (failed > 0) {
-            throw new BusinessException(
-                    "Odosielanie bolo dokončené s chybami. Úspešné pokusy: "
-                            + successful + ", neúspešné pokusy: " + failed
-            );
-        }
         return new EmailSendResult(clients.size(), successful, failed);
     }
 }

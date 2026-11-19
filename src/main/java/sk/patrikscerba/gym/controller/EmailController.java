@@ -32,7 +32,7 @@ public class EmailController {
     }
 
     @PostMapping
-    public ResponseEntity<String> sendEmail(
+    public ResponseEntity<EmailSendResult> sendEmail(
             @Valid @RequestPart("request") EmailSendRequest request,
             @RequestPart(value = "attachments", required = false)
             List<MultipartFile> attachments
@@ -40,8 +40,6 @@ public class EmailController {
         EmailSendResult result =
         notificationEmailService.sendEmail(request, attachments);
 
-        return ResponseEntity.ok(
-                "Email bol úspešne odoslaný."
-        );
+        return ResponseEntity.ok(result);
     }
 }

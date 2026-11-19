@@ -35,6 +35,7 @@ export default function ClientManagementSection({
 
   const [qrClient, setQrClient] = useState(null);
   const [emailModal, setEmailModal] = useState(null);
+  const [emailResult, setEmailResult] = useState(null);
   const [emailSending, setEmailSending] = useState(false);
   const emailSendingRef = useRef(false);
   const [isEmailSelectionMode, setIsEmailSelectionMode] = useState(false);
@@ -176,6 +177,8 @@ export default function ClientManagementSection({
   function handleSendEmail(client) {
     if (emailSendingRef.current) return;
 
+    setEmailResult(null);
+
     setEmailModal({
       mode: "single",
       client: client,
@@ -185,6 +188,7 @@ export default function ClientManagementSection({
   function handleSendEmailAll() {
     if (emailSendingRef.current) return;
 
+    setEmailResult(null);
     setIsEmailSelectionMode(false);
     setSelectedClients([]);
 
@@ -204,7 +208,9 @@ export default function ClientManagementSection({
     setEmailModal(null);
   }
 
-  function handleEmailSuccess() {
+  function handleEmailSuccess(result) {
+    console.log("EMAIL RESULT:", result); // DOČASNÁ KONTROLA
+    setEmailResult(result);
     setEmailModal(null);
     setSelectedClients([]);
     setIsEmailSelectionMode(false);
@@ -231,6 +237,8 @@ export default function ClientManagementSection({
 
     if (selectedClientIds.length === 0) return;
 
+    setEmailResult(null);
+
     setEmailModal({
       mode: "selected",
       client: null,
@@ -239,6 +247,7 @@ export default function ClientManagementSection({
 
   return (
     <>
+
       {isSearchView && (
         <div style={{ marginTop: "20px" }}>
           <ClientSearch onSearch={handleClientSearch} loading={loadingSearch} />
@@ -377,6 +386,28 @@ export default function ClientManagementSection({
           onSuccess={handleEmailSuccess}
         />
       )}
+      {emailResult && (
+          <div style={{ margin: "20px 0" }}>
+            <p>
+              {emailResult.failed === 0
+                  ? "Všetky e-maily boli úspešne odoslané."
+                  : emailResult.successful === 0
+                      ? "Nepodarilo sa odoslať žiadny e-mail."
+                      : "Odosielanie bolo dokončené s čiastočnými chybami."}
+            </p>
+
+            <p>Celkom príjemcov: {emailResult.total}</p>
+            <p>Úspešné odoslania: {emailResult.successful}</p>
+            <p>Neúspešné odoslania: {emailResult.failed}</p>
+
+            <button type="button" onClick={() => setEmailResult(null)}>
+              Zavrieť oznámenie
+            </button>
+          </div>
+      )}
+
+
+
     </>
   );
 }

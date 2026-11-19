@@ -35,9 +35,10 @@ export default function useEmailForm() {
             : [clientIds],
       };
 
-      await sendEmail(request, attachments);
+      const result = await sendEmail(request, attachments);
 
-      return true;
+      return result;
+
     } catch (err) {
       setError(err.message || "Email sa nepodarilo odoslať.");
     } finally {
