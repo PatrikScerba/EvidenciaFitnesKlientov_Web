@@ -19,6 +19,18 @@ export default function useEmailForm() {
     setAttachments(selectedFiles);
   };
 
+  const handleRemoveAttachment = (indexToRemove) => {
+    setAttachments((currentAttachments) =>
+      currentAttachments.filter((_, index) => index !== indexToRemove)
+    );
+
+    setError("");
+
+    if (attachmentInputRef.current) {
+      attachmentInputRef.current.value = "";
+    }
+  };
+
   const handleSubmit = async (clientIds, sendToAll = false) => {
     setIsSending(true);
     setError("");
@@ -63,6 +75,7 @@ export default function useEmailForm() {
     attachmentInputRef,
     handleChange,
     handleAttachmentsChange,
+    handleRemoveAttachment,
     handleSubmit,
   };
 }
