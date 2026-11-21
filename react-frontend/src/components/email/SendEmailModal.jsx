@@ -14,11 +14,13 @@ export default function SendEmailModal({
 }) {
   const {
     emailData,
+    attachments,
     error,
     isSending,
     handleChange,
     attachmentInputRef,
     handleAttachmentsChange,
+    handleRemoveAttachment,
     handleSubmit,
   } = useEmailForm();
 
@@ -260,7 +262,47 @@ export default function SendEmailModal({
             multiple
             ref={attachmentInputRef}
             onChange={handleAttachmentsChange}
+            disabled={isSending || confirmation !== null}
           />
+
+          {attachments.length > 0 && (
+            <ul
+              style={{
+                listStyle: "none",
+                padding: 0,
+                marginTop: "11px",
+              }}
+            >
+              {attachments.map((file, index) => (
+                <li
+                  key={`${file.name}-${file.lastModified}-${index}`}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    marginBottom: "9px",
+                  }}
+                >
+                  <span style={{ overflowWrap: "anywhere" }}>{file.name}</span>
+
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveAttachment(index)}
+                    disabled={isSending || confirmation !== null}
+                    aria-label={`Odstrániť prílohu ${file.name}`}
+                    title="Odstrániť prílohu"
+                    style={{
+                      color: "red",
+                      cursor: "pointer",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    ×
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         {error && <p style={{ color: "red" }}>{error}</p>}
